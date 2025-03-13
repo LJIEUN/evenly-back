@@ -1,0 +1,66 @@
+HELP.md
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# OS 파일
+.DS_Store
+Thumbs.db
+
+# 빌드 결과물
+/target/
+/out/
+/build/
+
+# Gradle 관련
+.gradle/
+/mvnw
+mvnw.cmd
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+# 환경 설정 파일 (보안!)
+.env
+*.properties
+*.yml
+!src/main/resources/application-example.properties
+!src/main/resources/application-example.yml
+!docker-compose.yml
+
+# 로그 파일
+logs/
+*.log
+
+# Docker 관련
+docker-compose.override.yml
