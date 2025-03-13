@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: evenly
+
+  # 스프링 관련 로그 색상 활성화
+  output:
+    ansi:
+      enabled: ALWAYS
+
+  # JPA 설정
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update  # 추후 SQL 사용 시 수정
+    show-sql: true
+
+  # 데이터베이스 설정
+  datasource:
+    url: jdbc:postgresql://localhost:5432/[여기 작성]
+    username: [여기 작성]
+    password: [여기 작성]
+    driver-class-name: org.postgresql.Driver
