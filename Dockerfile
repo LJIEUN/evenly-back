@@ -5,9 +5,9 @@ RUN gradle build --no-daemon -x test
 
 FROM openjdk:21-jdk-slim
 WORKDIR /app
-COPY --from=build /app/build/libs/*.jar app.jar
+COPY --from=build /app/build/libs/ /app/
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["sh", "-c", "java -jar /app/$(ls /app | grep SNAPSHOT.jar)"]
 
 
 # docker build -t evenly-backend .
