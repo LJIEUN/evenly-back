@@ -1,4 +1,18 @@
 services:
+  app:
+    image: evenly-backend
+    build: .
+    container_name: evenly_app
+    restart: always
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/${MYSQL_DATABASE}?serverTimezone=UTC&characterEncoding=UTF-8
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
   db:
     image: mysql:latest
     container_name: evenly_mysql
