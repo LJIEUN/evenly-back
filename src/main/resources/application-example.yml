@@ -16,7 +16,7 @@ spring:
 
   # 데이터베이스 설정
   datasource:
-    url: jdbc:postgresql://localhost:5432/[여기 작성]
-    username: [여기 작성]
-    password: [여기 작성]
-    driver-class-name: org.postgresql.Driver
+    url:
+    username:
+    password:
+    driver-class-name:
