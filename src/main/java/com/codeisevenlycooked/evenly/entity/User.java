@@ -28,17 +28,22 @@ public class User {
     @Column(nullable = false)
     private UserStatus status = UserStatus.ACTIVE;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserRole role = UserRole.USER;
+
     @Column(columnDefinition = "TIMESTAMP NULL")
     private LocalDateTime deletedAt; // 탈퇴한 경우 삭제 시간 (30일 후 영구 삭제)
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    public User(String userId, String password, String name, UserStatus status, LocalDateTime createdAt) {
+    public User(String userId, String password, String name, UserStatus status, UserRole role, LocalDateTime createdAt) {
         this.userId = userId;
         this.password = password;
         this.name = name;
         this.status = status;
+        this.role = role;
         this.createdAt = createdAt;
     }
 
