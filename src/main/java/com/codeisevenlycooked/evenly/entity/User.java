@@ -38,13 +38,13 @@ public class User {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    public User(String userId, String password, String name, UserStatus status, UserRole role, LocalDateTime createdAt) {
+    public User(String userId, String password, String name, UserRole role) {
         this.userId = userId;
         this.password = password;
         this.name = name;
-        this.status = status;
+        this.status = UserStatus.ACTIVE;
         this.role = role;
-        this.createdAt = createdAt;
+        this.createdAt = LocalDateTime.now();
     }
 
     public void requestDelete() {
