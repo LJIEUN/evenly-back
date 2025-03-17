@@ -39,7 +39,8 @@ public class Product {
     private int stock;
 
     @Column(nullable = false)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private ProductStatus status;
 
     @Column(nullable = false)
     @CreationTimestamp
