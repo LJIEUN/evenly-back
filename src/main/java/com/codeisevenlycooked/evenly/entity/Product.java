@@ -6,11 +6,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "product")
+@Table(name = "products")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -44,6 +43,6 @@ public class Product {
 
     @Column(nullable = false)
     @CreationTimestamp
-    private Timestamp created_at;
+    private LocalDateTime created_at;
 
 }
