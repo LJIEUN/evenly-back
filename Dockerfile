@@ -7,7 +7,7 @@ FROM openjdk:21-jdk-slim
 WORKDIR /app
 COPY --from=build /app/build/libs/ /app/
 EXPOSE 8080
-ENTRYPOINT ["sh", "-c", "java -jar /app/$(ls /app | grep SNAPSHOT.jar)"]
+ENTRYPOINT ["sh", "-c", "java -jar $(ls /app/*SNAPSHOT.jar | grep -v plain)"]
 
 
 # docker build -t evenly-backend .
