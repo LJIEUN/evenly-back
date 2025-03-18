@@ -31,6 +31,13 @@ spring:
     password:
     driver-class-name:
 
+  #Redis
+  redis:
+    host: localhost
+    port: 6379
+    password:
+
+
 jwt:
   secret:   # ✅ AccessToken 서명 키 (Base64)
   refresh_secret:   # ✅ RefreshToken 서명 키 (Base64)
