@@ -86,6 +86,10 @@ public class JwtUtil {
                 .getBody();
     }
 
+    public Claims parseClaims(String token) {
+        return parseClaims(token, accessKey);
+    }
+
     //토큰에서 userId 가져오기
     public String getUserIdFromToken(String token) {
         return parseClaims(token, accessKey).getSubject();
