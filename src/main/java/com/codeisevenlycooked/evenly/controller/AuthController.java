@@ -29,7 +29,7 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody SignInDto signInDto) {
         String[] tokens = authService.login(signInDto);
         return ResponseEntity.ok()
-                .header("Authorizaion", "Bearer" + tokens[0])
+                .header("Authorization", "Bearer " + tokens[0])
                 .header("Refresh-Token", tokens[1])
                 .body("로그인 성공!");
     }

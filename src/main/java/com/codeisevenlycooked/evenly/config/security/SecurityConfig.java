@@ -22,7 +22,7 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable()) // JWT 사용으로 필요 없음
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
+            .authorizeHttpRequests(request -> request
                     .requestMatchers("/auth/login", "/auth/signup").permitAll() // 로그인, 회원가입 인증 없이
                     .requestMatchers("/", "/products/**").permitAll()// 홈화면(상품 목록), 상품 상세, 등 추가 필요
                     .anyRequest().authenticated() // 그외 모든 요청은 인증 필요
