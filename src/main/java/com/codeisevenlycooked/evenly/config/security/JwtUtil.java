@@ -105,4 +105,12 @@ public class JwtUtil {
         return null;
     }
 
+    public Date getExpiredTime(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(accessKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration();
+    }
 }
