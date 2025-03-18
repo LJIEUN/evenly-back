@@ -1,6 +1,7 @@
 package com.codeisevenlycooked.evenly.global.filter;
 
 import com.codeisevenlycooked.evenly.config.security.JwtUtil;
+import com.codeisevenlycooked.evenly.service.RedisService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -19,6 +20,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
+    private final RedisService redisService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -27,6 +29,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             //JWT 가져오기
             String token = jwtUtil.resolveToken(request);
+
+            //블랙리스트 체크
+            if (token != null && redisService.isBlackListed(token)) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                response.getWriter().write("{\"message\": \"Signed Out Token\"}");
+                return;
+            }
 
             //JWT 검증 후 SecurityContext에 저장
             if (token != null && jwtUtil.validateAccessToken(token)) {
