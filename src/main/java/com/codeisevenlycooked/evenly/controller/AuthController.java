@@ -1,5 +1,6 @@
 package com.codeisevenlycooked.evenly.controller;
 
+import com.codeisevenlycooked.evenly.dto.SignInDto;
 import com.codeisevenlycooked.evenly.dto.SignUpDto;
 import com.codeisevenlycooked.evenly.service.AuthService;
 import jakarta.validation.Valid;
@@ -23,4 +24,14 @@ public class AuthController {
         authService.signUp(signUpDto);
         return ResponseEntity.status(HttpStatus.CREATED).body("회원가입 성공!");
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody SignInDto signInDto) {
+        String[] tokens = authService.login(signInDto);
+        return ResponseEntity.ok()
+                .header("Authorizaion", "Bearer" + tokens[0])
+                .header("Refresh-Token", tokens[1])
+                .body("로그인 성공!");
+    }
+
 }
