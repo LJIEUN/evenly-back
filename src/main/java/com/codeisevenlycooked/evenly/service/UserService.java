@@ -39,4 +39,13 @@ public class UserService {
         user.updatePassword(encodedPassword);
     }
 
+    @Transactional
+    public void deleteMyAccount(String accessToken) {
+        String userId = jwtUtil.getUserIdFromToken(accessToken);
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        user.deletedAccount();
+    }
+
 }

@@ -51,12 +51,18 @@ public class User {
         this.createdAt = LocalDateTime.now();
     }
 
-    public void requestDelete() {
+    public void updatePassword(String newPassword) {
+        this.password = newPassword;
+    }
+
+    public void deletedAccount() {
         this.status = UserStatus.DELETED;
         this.deletedAt = LocalDateTime.now();
     }
 
-    public void updatePassword(String newPassword) {
-        this.password = newPassword;
+    public void restoreAccount() {
+        this.status = UserStatus.ACTIVE;
+        this.deletedAt = null;
     }
+
 }

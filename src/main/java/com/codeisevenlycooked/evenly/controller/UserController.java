@@ -34,4 +34,11 @@ public class UserController {
 
         return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
     }
+
+    @DeleteMapping("/my")
+    public ResponseEntity<String> deleteMyAccount(@RequestHeader("Authorization") String token) {
+        String accessToken = token.replace("Bearer ", "");
+        userService.deleteMyAccount(accessToken);
+        return ResponseEntity.ok("회원 탈퇴가 완료되었습니다. 회원 정보가 30일 후에 완전 삭제됩니다.");
+    }
 }
