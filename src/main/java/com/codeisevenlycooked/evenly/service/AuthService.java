@@ -42,6 +42,10 @@ public class AuthService {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
+        //마지막 로그인 시간 업데이트
+        user.updateLastLogin();
+        userRepository.save(user);
+
         //Jwt 발급
         JwtUserInfoDto userInfo = new JwtUserInfoDto(user.getUserId(), user.getRole().name());
         return jwtUtil.generateToken(userInfo);
