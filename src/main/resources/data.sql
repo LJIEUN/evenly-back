@@ -5,7 +5,7 @@ SELECT 'Barro Plate-Set of 2-Ø18-Dark blue',
  ', CHAR(10),'Size: D18') ,
        'https://www.hay.com/img_20230907111544/globalassets/inriver/integration/service/ac459-a668-ai60-02au_barro-plate-oe18-set-of-2-dark-blue_gb_1220x1220_brandvariant.jpg?w=600',
        'Kitchen',
-       15,
+       0,
        'SOLD_OUT',
        CONVERT_TZ(NOW(), 'UTC', 'Asia/Seoul')
 WHERE NOT EXISTS (
