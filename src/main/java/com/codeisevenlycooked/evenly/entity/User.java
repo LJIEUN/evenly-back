@@ -55,4 +55,8 @@ public class User {
         this.status = UserStatus.DELETED;
         this.deletedAt = LocalDateTime.now();
     }
+
+    public void updatePassword(String newPassword) {
+        this.password = newPassword;
+    }
 }
