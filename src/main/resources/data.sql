@@ -1,0 +1,5 @@
+INSERT IGNORE INTO products (name, price, description ,image_url, category, stock, status, created_at)
+VALUES
+    ('Apollo Portable Lamp-White opal glass', 150000, '\nSize:\nH21.8 x W12.5 x L12.5\nColor:\nWhite\nMaterial:\nGlass\nCord:\n100 cm\nBulb:\nLED G4\nDimmable:\nYes\nSwitch:\nTouch step dimmer\nIP:\n44\nSupply:\n5V, 2A' , 'https://www.hay.com/img_20240404083132/globalassets/inriver/integration/service/ae378-b508_apollo-portable-white_gb_1220x1220_brandvariant.jpg?w=600', 'Lighting', 10, 'AVAILABLE', NOW()),
+    ('Barro Plate-Set of 2-Ø18-Dark blue', 35000, 'Color:\nDark blueSize:\nD18\n",
+    "imageUrl": "https://www.hay.com/img_20230907111544/globalassets/inriver/integration/service/ac459-a668-ai60-02au_barro-plate-oe18-set-of-2-dark-blue_gb_1220x1220_brandvariant.jpg?w=600' ,'https://www.hay.com/img_20230907111544/globalassets/inriver/integration/service/ac459-a668-ai60-02au_barro-plate-oe18-set-of-2-dark-blue_gb_1220x1220_brandvariant.jpg?w=600', 'Kitchen', 15, 'SOLD_OUT', NOW());
