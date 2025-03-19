@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}">
+
+<head>
+    <title>상품 등록/수정</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+</head>
+
+<body>
+<!-- ✅ layout:fragment="content"로 감싸기 -->
+<section layout:fragment="content">
+    <div class="container">
+        <h2>상품 등록/수정</h2>
+
+        <form th:action="@{${product.id != null} ? '/admin/products/' + ${product.id} + '/edit' : '/admin/products/new'}"
+              th:object="${product}" method="post">
+
+            <div class="mb-3">
+                <label class="form-label">상품명</label>
+                <input type="text" class="form-control" th:field="*{name}" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">가격</label>
+                <input type="number" class="form-control" th:field="*{price}" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">재고</label>
+                <input type="number" class="form-control" th:field="*{stock}" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">상품 설명</label>
+                <textarea class="form-control" th:field="*{description}" rows="3" required></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">이미지 URL</label>
+                <input type="text" class="form-control" th:field="*{imageUrl}" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">카테고리</label>
+                <input type="text" class="form-control" th:field="*{category}" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">상태</label>
+                <select class="form-control" th:field="*{status}">
+                    <option value="AVAILABLE">AVAILABLE</option>
+                    <option value="SOLD_OUT">SOLD_OUT</option>
+                    <option value="DELETED">DELETED</option>
+                </select>
+            </div>
+
+            <div class="mt-3">
+                <button type="submit" class="btn btn-success">저장</button>
+                <a href="/admin/products" class="btn btn-secondary">취소</a>
+            </div>
+        </form>
+
+        <div class="mt-3" th:if="${product.id != null}">
+            <form th:action="@{'/admin/products/' + ${product.id} + '/delete'}" method="post" style="display:inline;">
+                <button type="submit" class="btn btn-danger">삭제</button>
+            </form>
+
+            <form th:action="@{'/admin/products/' + ${product.id} + '/permanent-delete'}" method="post" style="display:inline;">
+                <button type="submit" class="btn btn-dark">영구 삭제</button>
+            </form>
+        </div>
+    </div>
+</section>
+</body>
+</html>
