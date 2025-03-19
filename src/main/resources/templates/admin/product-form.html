@@ -9,9 +9,8 @@
 </head>
 
 <body>
-<!-- ✅ layout:fragment="content"로 감싸기 -->
 <section layout:fragment="content">
-    <div class="container">
+    <div class="container py-2">
         <h2>상품 등록/수정</h2>
 
         <form th:action="@{${product.id != null} ? '/admin/products/' + ${product.id} + '/edit' : '/admin/products/new'}"
@@ -56,21 +55,21 @@
                 </select>
             </div>
 
-            <div class="mt-3">
-                <button type="submit" class="btn btn-success">저장</button>
-                <a href="/admin/products" class="btn btn-secondary">취소</a>
+            <div class="mt-3 d-flex justify-content-between">
+                <div>
+                    <button type="submit" class="btn btn-success">저장</button>
+                    <a href="/admin/products" class="btn btn-secondary">취소</a>
+                </div>
+                <div th:if="${product.id != null}" class="text-end">
+                    <form th:action="@{'/admin/products/' + ${product.id} + '/delete'}" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-danger">삭제</button>
+                    </form>
+                    <form th:action="@{'/admin/products/' + ${product.id} + '/permanent-delete'}" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-dark">영구 삭제</button>
+                    </form>
+                </div>
             </div>
         </form>
-
-        <div class="mt-3" th:if="${product.id != null}">
-            <form th:action="@{'/admin/products/' + ${product.id} + '/delete'}" method="post" style="display:inline;">
-                <button type="submit" class="btn btn-danger">삭제</button>
-            </form>
-
-            <form th:action="@{'/admin/products/' + ${product.id} + '/permanent-delete'}" method="post" style="display:inline;">
-                <button type="submit" class="btn btn-dark">영구 삭제</button>
-            </form>
-        </div>
     </div>
 </section>
 </body>
