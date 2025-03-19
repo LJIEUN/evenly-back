@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,6 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @RequiredArgsConstructor
+@EnableWebSecurity
 public class SecurityConfig {
     private final JwtUtil jwtUtil;
     private final RedisService redisService;
@@ -25,8 +27,9 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable()) // JWT 사용으로 필요 없음
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(request -> request
+                    .requestMatchers("/", "/css/**", "/products/**").permitAll()// 홈화면(상품 목록), 상품 상세, 등 추가 필요
+                    .requestMatchers("/admin/**" ).permitAll()
                     .requestMatchers("/auth/login", "/auth/signup").permitAll() // 로그인, 회원가입 인증 없이
-                    .requestMatchers("/", "/products/**").permitAll()// 홈화면(상품 목록), 상품 상세, 등 추가 필요
                     .anyRequest().authenticated() // 그외 모든 요청은 인증 필요
             )
             .addFilterBefore(new JwtAuthenticationFilter(jwtUtil, redisService), UsernamePasswordAuthenticationFilter.class);
