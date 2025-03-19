@@ -1,5 +1,8 @@
 package com.codeisevenlycooked.evenly.service;
 
+import com.codeisevenlycooked.evenly.config.security.JwtUtil;
+import com.codeisevenlycooked.evenly.dto.JwtUserInfoDto;
+import com.codeisevenlycooked.evenly.dto.SignInDto;
 import com.codeisevenlycooked.evenly.dto.SignUpDto;
 import com.codeisevenlycooked.evenly.entity.User;
 import com.codeisevenlycooked.evenly.entity.UserRole;
@@ -14,6 +17,7 @@ import org.springframework.stereotype.Service;
 public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     @Transactional
     public void signUp(SignUpDto signUpDto) {
@@ -28,6 +32,19 @@ public class AuthService {
         User user = new User(signUpDto.getUserId(), encodedPassword, signUpDto.getName(), UserRole.USER);
 
         userRepository.save(user);
+    }
+
+    public String[] login(SignInDto signInDto) {
+        User user = userRepository.findByUserId(signInDto.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+
+        if (!passwordEncoder.matches(signInDto.getPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+
+        //Jwt 발급
+        JwtUserInfoDto userInfo = new JwtUserInfoDto(user.getUserId(), user.getRole().name());
+        return jwtUtil.generateToken(userInfo);
     }
 
 }
