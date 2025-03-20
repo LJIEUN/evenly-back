@@ -50,6 +50,10 @@ public class OrderService {
             Product product = productRepository.findById(itemDto.getProductId())
                     .orElseThrow(() -> new IllegalArgumentException("상품이 없습니다."));
 
+            if (itemDto.getQuantity() > product.getStock()) {
+                throw new IllegalArgumentException("상품 `" + product.getName() + "`의 재고가 부족합니다.");
+            }
+
             BigDecimal itemTotalPrice = BigDecimal.valueOf(product.getPrice())
                     .multiply(BigDecimal.valueOf(itemDto.getQuantity()));
             totalPrice = totalPrice.add(itemTotalPrice);
