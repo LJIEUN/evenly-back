@@ -19,7 +19,8 @@ public class UserController {
 
     @GetMapping("/my")
     public ResponseEntity<UserInfoDto> getMyInfo(@RequestHeader("Authorization") String token) {
-        String accessToken = token.replace("Bearer ", "");
+        String accessToken = jwtUtil.resolveToken(token);
+
         UserInfoDto userInfo = userService.getMyInfo(accessToken);
         return ResponseEntity.ok(userInfo);
     }
@@ -29,7 +30,7 @@ public class UserController {
             @RequestHeader("Authorization") String token,
             @Valid @RequestBody UpdatePasswordDto updatePasswordDto) {
 
-        String accessToken = token.replace("Bearer ", "");
+        String accessToken = jwtUtil.resolveToken(token);
         userService.updatePassword(accessToken, updatePasswordDto);
 
         return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
@@ -37,7 +38,7 @@ public class UserController {
 
     @DeleteMapping("/my")
     public ResponseEntity<String> deleteMyAccount(@RequestHeader("Authorization") String token) {
-        String accessToken = token.replace("Bearer ", "");
+        String accessToken = jwtUtil.resolveToken(token);
         userService.deleteMyAccount(accessToken);
         return ResponseEntity.ok("회원 탈퇴가 완료되었습니다. 회원 정보가 30일 후에 완전 삭제됩니다.");
     }
