@@ -79,4 +79,49 @@ public class OrderService {
                 .orderItems(orderItemResponses)
                 .build();
     }
+
+    @Transactional
+    public List<OrderResponseDto> getOrders(String userId) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        List<Order> orders = orderRepository.findByUser(user);
+        return orders.stream().map(this::converToResponseDto).toList();
+    }
+
+    @Transactional
+    public OrderResponseDto getOrderById(String userId, Long orderId) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        Order order = orderRepository.findByIdAndUser(orderId, user)
+                .orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾을 수 없습니다."));
+
+        return converToResponseDto(order);
+    }
+
+    private OrderResponseDto converToResponseDto(Order order) {
+        List<OrderItemResponseDto> orderItems = order.getOrderItems().stream()
+                .map(item -> new OrderItemResponseDto(
+                        item.getProduct().getId(),
+                        item.getProduct().getName(),
+                        item.getQuantity(),
+                        item.getPrice()))
+                .toList();
+
+        return OrderResponseDto.builder()
+                .orderId(order.getId())
+                .totalPrice(order.getTotalPrice())
+                .status(order.getStatus().name())
+                .receiverName(order.getReceiverName())
+                .address(order.getAddress())
+                .mobile(order.getMobile())
+                .deliveryMessage(order.getDeliveryMessage())
+                .paymentMethod(order.getPaymentMethod())
+                .createdAt(order.getCreatedAt())
+                .orderItems(orderItems)
+                .build();
+    }
+
+
 }

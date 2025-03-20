@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/orders")
 @RequiredArgsConstructor
@@ -26,5 +28,23 @@ public class OrderController {
         OrderResponseDto responseDto = orderService.createOrder(userId, requestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<OrderResponseDto>> getOrders(
+            @RequestHeader(value = "Authorization", required = false) String token) {
+        String userId = "test_evenie";
+
+        List<OrderResponseDto> orders = orderService.getOrders(userId);
+        return ResponseEntity.ok(orders);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<OrderResponseDto> getOrderById(
+            @RequestHeader(value = "Authorization", required = false) String token, @PathVariable Long id) {
+        String userId = "test_evenie";
+
+        OrderResponseDto order = orderService.getOrderById(userId, id);
+        return ResponseEntity.ok(order);
     }
 }
