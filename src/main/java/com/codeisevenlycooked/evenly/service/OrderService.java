@@ -8,7 +8,6 @@ import com.codeisevenlycooked.evenly.entity.Order;
 import com.codeisevenlycooked.evenly.entity.OrderItem;
 import com.codeisevenlycooked.evenly.entity.Product;
 import com.codeisevenlycooked.evenly.entity.User;
-import com.codeisevenlycooked.evenly.repository.OrderItemRepository;
 import com.codeisevenlycooked.evenly.repository.OrderRepository;
 import com.codeisevenlycooked.evenly.repository.ProductRepository;
 import com.codeisevenlycooked.evenly.repository.UserRepository;
@@ -24,7 +23,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderService {
     private final OrderRepository orderRepository;
-    private final OrderItemRepository orderItemRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
 
@@ -59,52 +57,36 @@ public class OrderService {
             totalPrice = totalPrice.add(itemTotalPrice);
 
             order.addOrderItem(new OrderItem(product, itemDto.getQuantity(), BigDecimal.valueOf(product.getPrice())));
-            orderItemResponses.add(new OrderItemResponseDto(
-                    product.getId(),
-                    product.getName(),
-                    itemDto.getQuantity(),
-                    BigDecimal.valueOf(product.getPrice()))
-            );
         }
 
         order.setTotalPrice(totalPrice);
         orderRepository.save(order);
 
-        return OrderResponseDto.builder()
-                .orderId(order.getId())
-                .totalPrice(order.getTotalPrice())
-                .status(order.getStatus().name())
-                .receiverName(order.getReceiverName())
-                .address(order.getAddress())
-                .mobile(order.getMobile())
-                .deliveryMessage(order.getDeliveryMessage())
-                .paymentMethod(order.getPaymentMethod())
-                .createdAt(order.getCreatedAt())
-                .orderItems(orderItemResponses)
-                .build();
+        return convertToResponseDto(order);
+
     }
 
     @Transactional
-    public List<OrderResponseDto> getOrders(String userId) {
+    public List<OrderResponseDto> getOrders (String userId){
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
         List<Order> orders = orderRepository.findByUser(user);
-        return orders.stream().map(this::converToResponseDto).toList();
+        return orders.stream().map(this::convertToResponseDto).toList();
     }
 
     @Transactional
-    public OrderResponseDto getOrderById(String userId, Long orderId) {
+    public OrderResponseDto getOrderById (String userId, Long orderId){
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
         Order order = orderRepository.findByIdAndUser(orderId, user)
                 .orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾을 수 없습니다."));
 
-        return converToResponseDto(order);
+        return convertToResponseDto(order);
     }
 
-    private OrderResponseDto converToResponseDto(Order order) {
+    private OrderResponseDto convertToResponseDto (Order order){
         List<OrderItemResponseDto> orderItems = order.getOrderItems().stream()
                 .map(item -> new OrderItemResponseDto(
                         item.getProduct().getId(),
@@ -126,6 +108,4 @@ public class OrderService {
                 .orderItems(orderItems)
                 .build();
     }
-
-
 }
