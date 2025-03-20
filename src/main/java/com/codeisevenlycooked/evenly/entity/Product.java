@@ -25,7 +25,7 @@ public class Product {
     @Column(nullable = false)
     private int price;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 5000)
     private String description;
 
     @Column(nullable = false)
@@ -43,6 +43,10 @@ public class Product {
 
     @Column(nullable = false)
     @CreationTimestamp
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
+
+    public void changeStatus(ProductStatus status) {
+        this.status = status;
+    }
 
 }

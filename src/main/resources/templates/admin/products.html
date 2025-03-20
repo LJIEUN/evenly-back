@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}">
+
+<head>
+    <title>상품 관리</title>
+</head>
+
+<body>
+<!-- ✅ `layout:fragment="content"`으로 정의된 부분 채움 -->
+<section layout:fragment="content">
+    <div class="container">
+        <h2>상품 관리</h2>
+        <a href="/admin/products/new" class="btn btn-primary mb-3">상품 등록</a>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>상품명</th>
+                <th>가격</th>
+                <th>재고</th>
+                <th>상태</th>
+                <th>관리</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="product : ${products}">
+                <td th:text="${product.id}"></td>
+                <td th:text="${product.name}"></td>
+                <td th:text="${product.price}"></td>
+                <td th:text="${product.stock}"></td>
+                <td th:text="${product.status}"></td>
+                <td>
+                    <a th:href="@{/admin/products/{id}/edit(id=${product.id})}" class="btn btn-sm btn-warning">수정</a>
+                    <form th:action="@{/admin/products/{id}/delete(id=${product.id})}" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-sm btn-danger">삭제</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+</body>
+</html>
