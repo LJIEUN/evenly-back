@@ -1,3 +1,4 @@
+-- 상품 초기 데이터 --
 INSERT INTO products (name, price, description, image_url, category, stock, status, created_at)
 SELECT 'Barro Plate-Set of 2-Ø18-Dark blue',
        35000,
@@ -26,3 +27,4 @@ SELECT 'Apollo Portable Lamp-White opal glass',
 WHERE NOT EXISTS (
     SELECT 1 FROM products WHERE name = 'Apollo Portable Lamp-White opal glass'
 );
+
