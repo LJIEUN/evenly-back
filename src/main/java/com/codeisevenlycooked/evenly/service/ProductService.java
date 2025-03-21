@@ -63,9 +63,13 @@ public class ProductService {
     }
 
     // 등록
+    @Transactional
     public void saveProduct(AdminProductDto productDto) {
-        Category category = categoryRepository.findById(productDto.getCategory().getId())
-                .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다."));
+        Long categoryId = productDto.getCategoryId();
+
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new RuntimeException("카테고리를 찾을 수 없습니다."));
+
         Product product = Product.builder()
                 .name(productDto.getName())
                 .price(productDto.getPrice())
@@ -75,6 +79,7 @@ public class ProductService {
                 .stock(productDto.getStock())
                 .status(ProductStatus.valueOf(productDto.getStatus())) // ENUM 변환
                 .build();
+        
         productRepository.save(product);
     }
 
@@ -85,8 +90,8 @@ public class ProductService {
     public void updateProduct(Long id, AdminProductDto productDto) {
         Product existingProduct = getProductByIdForAdmin(id);
 
-        Category category = categoryRepository.findById(productDto.getCategory().getId())
-                .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다."));
+        Category category = categoryRepository.findById(productDto.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("카테고리를 찾을 수 없습니다."));
 
         ProductStatus status = ProductStatus.valueOf(productDto.getStatus());
         if (productDto.getStock() == 0) {
@@ -115,7 +120,7 @@ public class ProductService {
                 .price(product.getPrice())
                 .description(product.getDescription())
                 .imageUrl(product.getImageUrl())
-                .category(product.getCategory())
+                .categoryId(product.getCategory().getId())
                 .stock(product.getStock())
                 .status(product.getStatus().name())
                 .build();

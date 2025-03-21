@@ -1,15 +1,19 @@
 package com.codeisevenlycooked.evenly.controller;
 
 import com.codeisevenlycooked.evenly.dto.AdminProductDto;
+import com.codeisevenlycooked.evenly.entity.Category;
 import com.codeisevenlycooked.evenly.entity.Product;
 import com.codeisevenlycooked.evenly.repository.CategoryRepository;
 import com.codeisevenlycooked.evenly.service.ProductService;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/admin/products")
@@ -27,7 +31,6 @@ public class AdminProductController {
     @GetMapping
     public String list(Model model) {
         model.addAttribute("products", productService.getAllProductsForAdmin());
-        System.out.println(productService.getAllProductsForAdmin());
         return "admin/products";
     }
 
@@ -41,10 +44,13 @@ public class AdminProductController {
 
     // 상품 등록 처리
     @PostMapping("/new")
-    public String create(@ModelAttribute @Validated AdminProductDto productDto, BindingResult result) {
+    public String create(@ModelAttribute("product") @Validated AdminProductDto productDto,
+                         BindingResult result) {
+        System.out.println("categoryId: " + productDto.getCategoryId());
         if (result.hasErrors()) {
             return "admin/product-form";
         }
+
         productService.saveProduct(productDto);
         return "redirect:/admin/products";
     }
@@ -65,6 +71,7 @@ public class AdminProductController {
         if (result.hasErrors()) {
             return "admin/product-form";
         }
+
         productService.updateProduct(id, productDto);
         return "redirect:/admin/products";
     }
