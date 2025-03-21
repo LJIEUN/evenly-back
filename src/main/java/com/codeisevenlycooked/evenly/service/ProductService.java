@@ -16,12 +16,32 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
 
     //상품 목록 조회 부분
-    public List<ProductResponseDto> getAllProducts() {
-        return productRepository.findByStatusNot(ProductStatus.DELETED).stream()
-                .map(ProductResponseDto::new)
-                .toList();
+//    public List<ProductResponseDto> getAllProducts() {
+//        return productRepository.findByStatusNot(ProductStatus.DELETED).stream()
+//                .map(ProductResponseDto::new)
+//                .toList();
+//    }
+    // 페이지네이션, 카테고리 추가
+    public Page<ProductResponseDto> getProductsByCategory(Long categoryId, int page) {
+        Pageable pageable = PageRequest.of(page - 1, 12, Sort.by("id").descending());
+
+        Page<Product> products;
+        if (categoryId != null && categoryId == 1L) {
+            Page<Product> original = productRepository.findByStatusNot(ProductStatus.DELETED, pageable);
+            List<Product> filtered = original.stream()
+                    .filter(p -> p.getCreatedAt().isAfter(LocalDateTime.now().minusDays(30)))
+                    .toList();
+            products = new PageImpl<>(filtered, pageable, filtered.size());
+        } else if (categoryId != null) {
+            products = productRepository.findByCategoryIdAndStatusNot(categoryId, ProductStatus.DELETED, pageable);
+        } else {
+            products = productRepository.findByStatusNot(ProductStatus.DELETED, pageable);
+        }
+
+        return products.map(ProductResponseDto::new);
     }
 
     //상품 상세 조회 부분 ( = 단일 상품 조회)
