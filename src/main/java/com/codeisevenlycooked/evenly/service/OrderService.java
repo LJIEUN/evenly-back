@@ -4,10 +4,7 @@ import com.codeisevenlycooked.evenly.dto.OrderItemDto;
 import com.codeisevenlycooked.evenly.dto.OrderItemResponseDto;
 import com.codeisevenlycooked.evenly.dto.OrderRequestDto;
 import com.codeisevenlycooked.evenly.dto.OrderResponseDto;
-import com.codeisevenlycooked.evenly.entity.Order;
-import com.codeisevenlycooked.evenly.entity.OrderItem;
-import com.codeisevenlycooked.evenly.entity.Product;
-import com.codeisevenlycooked.evenly.entity.User;
+import com.codeisevenlycooked.evenly.entity.*;
 import com.codeisevenlycooked.evenly.repository.OrderRepository;
 import com.codeisevenlycooked.evenly.repository.ProductRepository;
 import com.codeisevenlycooked.evenly.repository.UserRepository;
@@ -48,7 +45,8 @@ public class OrderService {
             Product product = productRepository.findById(itemDto.getProductId())
                     .orElseThrow(() -> new IllegalArgumentException("상품이 없습니다."));
 
-            if (itemDto.getQuantity() > product.getStock()) {
+            if (product.getStock() <= 0 || product.getStatus() == ProductStatus.SOLD_OUT ||
+                    itemDto.getQuantity() > product.getStock()) {
                 throw new IllegalArgumentException("상품 `" + product.getName() + "`의 재고가 부족합니다.");
             }
 
