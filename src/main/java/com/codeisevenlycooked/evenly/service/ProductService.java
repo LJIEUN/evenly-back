@@ -79,7 +79,7 @@ public class ProductService {
                 .stock(productDto.getStock())
                 .status(ProductStatus.valueOf(productDto.getStatus())) // ENUM 변환
                 .build();
-        
+
         productRepository.save(product);
     }
 
