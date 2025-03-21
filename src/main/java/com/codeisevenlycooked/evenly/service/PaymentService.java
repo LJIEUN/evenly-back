@@ -30,6 +30,12 @@ public class PaymentService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("주문을 찾을 수 없습니다."));
 
+        List<Payment> existingPayments = paymentRepository.findByOrderId(orderId);
+
+        if (!existingPayments.isEmpty() && "SUCCESS".equals(existingPayments.get(0).getStatus())) {
+            throw new RuntimeException("이 주문은 이미 결제 완료되었습니다.");
+        }
+
         BigDecimal amount = order.getTotalPrice();
         String paymentMethod = order.getPaymentMethod();
 
