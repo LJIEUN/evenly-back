@@ -49,4 +49,10 @@ public class Product {
         this.status = status;
     }
 
+    public void changeStock(int quantity) {
+        if (this.stock - quantity < 0) {
+            throw new RuntimeException("재고가 부족합니다.");
+        }
+        this.stock -= quantity;
+    }
 }
