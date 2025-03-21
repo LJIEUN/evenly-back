@@ -2,6 +2,7 @@ package com.codeisevenlycooked.evenly.controller;
 
 import com.codeisevenlycooked.evenly.dto.AdminProductDto;
 import com.codeisevenlycooked.evenly.entity.Product;
+import com.codeisevenlycooked.evenly.repository.CategoryRepository;
 import com.codeisevenlycooked.evenly.service.ProductService;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
@@ -15,9 +16,11 @@ import org.springframework.web.bind.annotation.*;
 public class AdminProductController {
 
     private final ProductService productService;
+    private final CategoryRepository categoryRepository;
 
-    public AdminProductController(ProductService productService) {
+    public AdminProductController(ProductService productService, CategoryRepository categoryRepository) {
         this.productService = productService;
+        this.categoryRepository = categoryRepository;
     }
 
     // 목록 조회(status DELETED도 조회 가능)
@@ -31,6 +34,7 @@ public class AdminProductController {
     // 상품 등록 폼
     @GetMapping("/new")
     public String showCreateForm(Model model) {
+        model.addAttribute("categoryList", categoryRepository.findAll());
         model.addAttribute("product", new AdminProductDto());
         return "admin/product-form";
     }
@@ -50,6 +54,7 @@ public class AdminProductController {
     public String showEditForm(@PathVariable Long id, Model model) {
         Product product = productService.getProductByIdForAdmin(id);
         AdminProductDto productDto = productService.convertToDto(product);
+        model.addAttribute("categoryList", categoryRepository.findAll());
         model.addAttribute("product", productDto);
         return "admin/product-form";
     }

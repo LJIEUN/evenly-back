@@ -43,7 +43,12 @@
 
             <div class="mb-3">
                 <label class="form-label">카테고리</label>
-                <input type="text" class="form-control" th:field="*{category}" required>
+                <select class="form-control" th:field="*{category}">
+                    <option th:each="category : ${categoryList}"
+                            th:value="${category.id}"
+                            th:text="|${category.id} : ${category.name}|">
+                    </option>
+                </select>
             </div>
 
             <div class="mb-3">
