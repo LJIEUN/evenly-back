@@ -35,7 +35,7 @@ public class OrderService {
                 requestDto.getAddress(),
                 requestDto.getMobile(),
                 requestDto.getDeliveryMessage(),
-                requestDto.getPaymentMethod()
+                requestDto.getPaymentMethod().name()
         );
 
         BigDecimal totalPrice = BigDecimal.ZERO;
