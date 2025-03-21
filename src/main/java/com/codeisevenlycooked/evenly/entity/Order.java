@@ -45,6 +45,10 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<Payment> payments;
+
+
     public Order(User user, BigDecimal totalPrice, String receiverName, String address, String mobile, String deliveryMessage, String paymentMethod) {
         this.user = user;
         this.totalPrice = totalPrice;
@@ -58,5 +62,9 @@ public class Order {
     public void addOrderItem(OrderItem item) {
         orderItems.add(item);
         item.setOrder(this);
+    }
+
+    public void changeStatus (OrderStatus newStatus) {
+        this.status = newStatus;
     }
 }
