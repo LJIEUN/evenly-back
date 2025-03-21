@@ -100,9 +100,16 @@ public class JwtUtil {
     public String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
+            return bearerToken.substring(7).trim();
         }
         return null;
+    }
+
+    public String resolveToken(String token) {
+        if (token != null && token.startsWith("Bearer ")) {
+            return token.substring(7).trim();
+        }
+        return token;
     }
 
     public Date getExpiredTime(String token) {
