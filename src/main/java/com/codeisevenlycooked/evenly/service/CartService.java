@@ -84,7 +84,7 @@ public class CartService {
                 .orElseThrow(() -> new IllegalArgumentException("상품 목록이 없습니다."));
 
         if (!cartItem.getCart().getUser().getId().equals(user.getId())) {
-            throw new IllegalArgumentException("로그인 이용해 주세요.");
+            throw new IllegalArgumentException("로그인 후 이용해 주세요.");
         }
 
         cartItem.setQuantity(quantity);
