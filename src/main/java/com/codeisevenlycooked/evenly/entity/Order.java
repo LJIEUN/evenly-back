@@ -22,6 +22,9 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, unique = true)
+    private String orderNumber;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
@@ -30,7 +33,8 @@ public class Order {
     private BigDecimal totalPrice;
 
     @Enumerated(EnumType.STRING)
-    private OrderStatus status = OrderStatus.PENDING;
+    @Column(length = 20)
+    private OrderStatus status = OrderStatus.PAYMENT_PENDING;
 
     private String receiverName;
     private String address;
@@ -45,7 +49,12 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    public Order(User user, BigDecimal totalPrice, String receiverName, String address, String mobile, String deliveryMessage, String paymentMethod) {
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<Payment> payments;
+
+
+    public Order(String orderNumber, User user, BigDecimal totalPrice, String receiverName, String address, String mobile, String deliveryMessage, String paymentMethod) {
+        this.orderNumber = orderNumber;
         this.user = user;
         this.totalPrice = totalPrice;
         this.receiverName = receiverName;
@@ -58,5 +67,9 @@ public class Order {
     public void addOrderItem(OrderItem item) {
         orderItems.add(item);
         item.setOrder(this);
+    }
+
+    public void changeStatus (OrderStatus newStatus) {
+        this.status = newStatus;
     }
 }
