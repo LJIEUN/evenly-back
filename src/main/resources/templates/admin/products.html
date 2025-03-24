@@ -17,6 +17,7 @@
             <thead>
             <tr>
                 <th>ID</th>
+                <th>카테고리</th>
                 <th>상품명</th>
                 <th>가격</th>
                 <th>재고</th>
@@ -27,6 +28,7 @@
             <tbody>
             <tr th:each="product : ${products}">
                 <td th:text="${product.id}"></td>
+                <td th:text="${product.category.name}"></td>
                 <td th:text="${product.name}"></td>
                 <td th:text="${product.price}"></td>
                 <td th:text="${product.stock}"></td>
