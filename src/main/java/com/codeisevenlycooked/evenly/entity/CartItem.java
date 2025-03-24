@@ -30,8 +30,9 @@ public class CartItem {
     @Column(nullable = false)
     private int quantity;
 
-    public int totalPrice() {
-        return product.getPrice() * quantity;
+    public BigDecimal totalPrice() {
+        return BigDecimal.valueOf(product.getPrice()).multiply(BigDecimal.valueOf(quantity));
+//        return product.getPrice() * quantity;
     }
 
 

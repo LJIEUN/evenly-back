@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -13,5 +15,5 @@ public class CartItemResponseDto {
     private String imageUrl;
     private int price;
     private int quantity;
-    private int totalPrice;
+    private BigDecimal totalPrice;
 }

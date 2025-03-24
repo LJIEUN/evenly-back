@@ -17,6 +17,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,7 +46,8 @@ public class CartService {
                         cartItem.totalPrice()
                 )).collect(Collectors.toList());
 
-        int total = items.stream().mapToInt(CartItemResponseDto::getTotalPrice).sum();
+        BigDecimal total = items.stream().map(CartItemResponseDto::getTotalPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         return new CartResponseDto(items,total);
     }
