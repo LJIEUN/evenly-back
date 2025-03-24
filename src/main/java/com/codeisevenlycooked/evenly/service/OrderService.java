@@ -39,7 +39,6 @@ public class OrderService {
         );
 
         BigDecimal totalPrice = BigDecimal.ZERO;
-        List<OrderItemResponseDto> orderItemResponses = new ArrayList<>();
 
         for (OrderItemDto itemDto : requestDto.getOrderItems()) {
             Product product = productRepository.findById(itemDto.getProductId())
