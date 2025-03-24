@@ -91,5 +91,16 @@ public class CartService {
         cartItemRepository.save(cartItem);
     }
 
+    /* 장바구니 상품 삭제 */
+    public void DeleteCartItem(User user, Long itemId) {
+        CartItem cartItem = cartItemRepository.findById(itemId)
+                .orElseThrow(() -> new IllegalArgumentException("상품 목록이 없습니다."));
+
+        if (!cartItem.getCart().getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("로그인 후 이용해주세요.");
+        }
+
+        cartItemRepository.delete(cartItem);
+    }
 
 }

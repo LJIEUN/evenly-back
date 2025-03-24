@@ -47,5 +47,10 @@ public class CartController {
         return ResponseEntity.ok("수량이 수정 되었습니다.");
     }
 
+    @DeleteMapping("{/itemId}")
+    public ResponseEntity<String> DeleteCartItem(@AuthenticationPrincipal(expression = "user") User user, @PathVariable Long itemId) {
+        cartService.DeleteCartItem(user, itemId);
+        return ResponseEntity.ok("상품이 삭제 되었습니다.");
+    }
 
 }
