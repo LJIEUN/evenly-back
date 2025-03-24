@@ -1,8 +1,6 @@
 package com.codeisevenlycooked.evenly.controller;
 
 import com.codeisevenlycooked.evenly.dto.PaymentRequestDto;
-import com.codeisevenlycooked.evenly.dto.PaymentSuccessDto;
-import com.codeisevenlycooked.evenly.entity.Payment;
 import com.codeisevenlycooked.evenly.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

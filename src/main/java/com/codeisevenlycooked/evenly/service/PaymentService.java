@@ -36,26 +36,26 @@ public class PaymentService {
             throw new RuntimeException("이 주문은 이미 결제 완료되었습니다.");
         }
 
+        if(!isPaymentSuccess) {
+            handlePaymentFailure(order);
+            return false;
+        }
+
         BigDecimal amount = order.getTotalPrice();
         String paymentMethod = order.getPaymentMethod();
 
-       Payment payment = new Payment(
-               amount,
-               paymentMethod,
-               isPaymentSuccess ? "SUCCESS" : "FAILED",
-               LocalDateTime.now(),
-               order
-       );
+        Payment payment = new Payment(
+                amount,
+                paymentMethod,
+                "SUCCESS",
+                LocalDateTime.now(),
+                order
+        );
 
-       paymentRepository.save(payment);
+        paymentRepository.save(payment);
 
-       if (isPaymentSuccess) {
-           handleSuccessfulPayment(order);
-       } else {
-           handlePaymentFailure(payment);
-       }
-
-       return isPaymentSuccess;
+        handleSuccessfulPayment(order);
+        return true;
     }
 
     private void handleSuccessfulPayment(Order order) {
@@ -71,7 +71,7 @@ public class PaymentService {
         }
     }
 
-    private void handlePaymentFailure(Payment payment) {
+    private void handlePaymentFailure(Order order) {
     }
 
 }
