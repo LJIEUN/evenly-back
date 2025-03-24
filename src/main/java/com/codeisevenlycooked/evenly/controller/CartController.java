@@ -1,5 +1,6 @@
 package com.codeisevenlycooked.evenly.controller;
 
+import com.codeisevenlycooked.evenly.dto.CartItemDto;
 import com.codeisevenlycooked.evenly.dto.CartItemResponseDto;
 import com.codeisevenlycooked.evenly.dto.CartResponseDto;
 import com.codeisevenlycooked.evenly.entity.Cart;
@@ -13,9 +14,7 @@ import com.codeisevenlycooked.evenly.service.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -34,6 +33,12 @@ public class CartController {
     public ResponseEntity<CartResponseDto> getCart(@AuthenticationPrincipal(expression = "user") User user) {
         CartResponseDto responseDto = cartService.getCart(user);
         return ResponseEntity.ok(responseDto);
+    }
+
+    @PostMapping
+    public ResponseEntity<String> addCart(@RequestBody CartItemDto cartItemDto, @AuthenticationPrincipal(expression = "user") User user) {
+        cartService.addCart(user, cartItemDto);
+        return ResponseEntity.ok("장바구니에 상품이 추가 되었습니다!");
     }
 
 }
