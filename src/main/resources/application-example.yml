@@ -33,7 +33,7 @@ spring:
 
   #Redis
   redis:
-    host: localhost
+    host:
     port: 6379
     password:
 
@@ -50,3 +50,7 @@ server:
     include-message: always
     include-binding-errors: never
     include-stacktrace: never
+
+proxy:
+  server:
+    url:
