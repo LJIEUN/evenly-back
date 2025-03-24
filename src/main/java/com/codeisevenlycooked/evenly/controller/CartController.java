@@ -41,4 +41,11 @@ public class CartController {
         return ResponseEntity.ok("장바구니에 상품이 추가 되었습니다!");
     }
 
+    @PatchMapping("{/itemId}")
+    public ResponseEntity<String> UpdateQuantityCart(@AuthenticationPrincipal(expression = "user") User user, @PathVariable Long itemId, @RequestBody CartItemDto cartItemDto) {
+        cartService.UpdateQuantityCart(user, itemId, cartItemDto.getQuantity());
+        return ResponseEntity.ok("수량이 수정 되었습니다.");
+    }
+
+
 }
