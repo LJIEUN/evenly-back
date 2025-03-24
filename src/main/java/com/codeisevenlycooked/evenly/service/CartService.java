@@ -79,17 +79,17 @@ public class CartService {
     }
 
     /* 장바구니 상품 수량 수정 */
-public void UpdateQuantityCart(User user, Long itemId, int quantity) {
-    CartItem cartItem = cartItemRepository.findById(itemId)
-            .orElseThrow(() -> new IllegalArgumentException("상품 목록이 없습니다."));
+    public void UpdateQuantityCart(User user, Long itemId, int quantity) {
+        CartItem cartItem = cartItemRepository.findById(itemId)
+                .orElseThrow(() -> new IllegalArgumentException("상품 목록이 없습니다."));
 
-    if (!cartItem.getCart().getUser().getId().equals(user.getId())) {
-        throw new IllegalArgumentException("로그인 이용해 주세요.");
+        if (!cartItem.getCart().getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("로그인 이용해 주세요.");
+        }
+
+        cartItem.setQuantity(quantity);
+        cartItemRepository.save(cartItem);
     }
-
-    cartItem.setQuantity(quantity);
-    cartItemRepository.save(cartItem);
-}
 
 
 }
