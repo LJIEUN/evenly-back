@@ -30,7 +30,8 @@ public class Order {
     private BigDecimal totalPrice;
 
     @Enumerated(EnumType.STRING)
-    private OrderStatus status = OrderStatus.PENDING;
+    @Column(length = 20)
+    private OrderStatus status = OrderStatus.PAYMENT_PENDING;
 
     private String receiverName;
     private String address;
