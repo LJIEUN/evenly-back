@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +30,10 @@ public class OrderService {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
 
+        String orderNumber = generateOrderNumber();
+
         Order order = new Order(
+                orderNumber,
                 user,
                 BigDecimal.ZERO,
                 requestDto.getReceiverName(),
@@ -73,11 +78,11 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponseDto getOrderById (String userId, Long orderId){
+    public OrderResponseDto getOrderByOrderNumber (String userId, String orderNumber){
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
-        Order order = orderRepository.findByIdAndUser(orderId, user)
+        Order order = orderRepository.findByOrderNumberAndUser(orderNumber, user)
                 .orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾을 수 없습니다."));
 
         return convertToResponseDto(order);
@@ -94,6 +99,7 @@ public class OrderService {
 
         return OrderResponseDto.builder()
                 .orderId(order.getId())
+                .orderNumber(order.getOrderNumber())
                 .totalPrice(order.getTotalPrice())
                 .status(order.getStatus().name())
                 .receiverName(order.getReceiverName())
@@ -104,5 +110,11 @@ public class OrderService {
                 .createdAt(order.getCreatedAt())
                 .orderItems(orderItems)
                 .build();
+    }
+
+    private String generateOrderNumber() {
+        String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        String orderNumber = date + String.format("%04d", orderRepository.count() + 1);
+        return orderNumber;
     }
 }

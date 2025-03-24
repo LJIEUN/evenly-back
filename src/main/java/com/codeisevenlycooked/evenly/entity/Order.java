@@ -22,6 +22,9 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, unique = true)
+    private String orderNumber;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
@@ -50,7 +53,8 @@ public class Order {
     private List<Payment> payments;
 
 
-    public Order(User user, BigDecimal totalPrice, String receiverName, String address, String mobile, String deliveryMessage, String paymentMethod) {
+    public Order(String orderNumber, User user, BigDecimal totalPrice, String receiverName, String address, String mobile, String deliveryMessage, String paymentMethod) {
+        this.orderNumber = orderNumber;
         this.user = user;
         this.totalPrice = totalPrice;
         this.receiverName = receiverName;
