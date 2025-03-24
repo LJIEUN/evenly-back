@@ -33,7 +33,7 @@
 
             <div class="mb-3">
                 <label class="form-label">상품 설명</label>
-                <textarea class="form-control" th:field="*{description}" rows="3" required></textarea>
+                <textarea class="form-control" th:field="*{description}" rows="3"></textarea>
             </div>
 
             <div class="mb-3">
@@ -43,7 +43,13 @@
 
             <div class="mb-3">
                 <label class="form-label">카테고리</label>
-                <input type="text" class="form-control" th:field="*{category}" required>
+                <select class="form-control" th:field="*{categoryId}" required>
+                    <option th:each="category : ${categoryList}"
+                            th:value="${category.id}"
+                            th:text="${category.id} + ' : ' + ${category.name}"
+                            th:disabled="${category.id == 1}">
+                    </option>
+                </select>
             </div>
 
             <div class="mb-3">
@@ -73,4 +79,12 @@
     </div>
 </section>
 </body>
+
+<script>
+    const categorySelect = document.getElementById('category');
+    const option = categorySelect.querySelector('option[value="1"]');
+    if (option) {
+        option.disabled = true;
+    }
+</script>
 </html>
