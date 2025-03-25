@@ -3,6 +3,7 @@ package com.codeisevenlycooked.evenly.controller;
 import com.codeisevenlycooked.evenly.config.security.JwtUtil;
 import com.codeisevenlycooked.evenly.dto.SignInDto;
 import com.codeisevenlycooked.evenly.dto.SignUpDto;
+import com.codeisevenlycooked.evenly.dto.TokenResponse;
 import com.codeisevenlycooked.evenly.service.AuthService;
 import com.codeisevenlycooked.evenly.service.RedisService;
 import io.jsonwebtoken.JwtException;
@@ -11,7 +12,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -32,9 +32,7 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody SignInDto signInDto) {
         String[] tokens = authService.login(signInDto);
         return ResponseEntity.ok()
-                .header("Authorization", "Bearer " + tokens[0])
-                .header("Refresh-Token", tokens[1])
-                .body("로그인 성공!");
+                .body(new TokenResponse(tokens[0], tokens[1]));
     }
 
     @PostMapping("/refresh")
@@ -63,5 +61,4 @@ public class AuthController {
 
         return ResponseEntity.ok("로그아웃 완료!");
     }
-
 }
