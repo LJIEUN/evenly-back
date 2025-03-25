@@ -35,12 +35,14 @@ public class SecurityConfig {
             )
             .exceptionHandling(e -> e
                     .authenticationEntryPoint((request, response, authException) -> {
-                                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                                response.getWriter().write("401 Unauthorized: 인증이 필요합니다.");
+                        response.setContentType("application/json; charset=UTF-8");
+                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                        response.getWriter().write("{\"message\": \"401 Unauthorized: 인증이 필요합니다.\"}");
                     })
                     .accessDeniedHandler((request, response, accessDeniedException) -> {
+                        response.setContentType("application/json; charset=UTF-8");
                         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                        response.getWriter().write("403 Forbidden: 접근이 거부되었습니다.");
+                        response.getWriter().write("{\"message\": \"403 Forbidden: 접근이 거부되었습니다.\"}");
                     })
 
             )
