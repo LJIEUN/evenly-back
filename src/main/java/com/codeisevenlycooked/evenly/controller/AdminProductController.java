@@ -1,12 +1,9 @@
 package com.codeisevenlycooked.evenly.controller;
 
 import com.codeisevenlycooked.evenly.dto.AdminProductDto;
-import com.codeisevenlycooked.evenly.entity.Category;
 import com.codeisevenlycooked.evenly.entity.Product;
 import com.codeisevenlycooked.evenly.repository.CategoryRepository;
 import com.codeisevenlycooked.evenly.service.ProductService;
-import org.springframework.data.domain.Sort;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
