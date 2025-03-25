@@ -50,7 +50,3 @@ server:
     include-message: always
     include-binding-errors: never
     include-stacktrace: never
-
-proxy:
-  server:
-    url:

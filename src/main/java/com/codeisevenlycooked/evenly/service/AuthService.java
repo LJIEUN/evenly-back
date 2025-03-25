@@ -6,6 +6,7 @@ import com.codeisevenlycooked.evenly.dto.SignInDto;
 import com.codeisevenlycooked.evenly.dto.SignUpDto;
 import com.codeisevenlycooked.evenly.entity.User;
 import com.codeisevenlycooked.evenly.entity.UserRole;
+import com.codeisevenlycooked.evenly.entity.UserStatus;
 import com.codeisevenlycooked.evenly.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,10 @@ public class AuthService {
     public String[] login(SignInDto signInDto) {
         User user = userRepository.findByUserId(signInDto.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+
+        if (user.getStatus() == UserStatus.BANNED || user.getStatus() == UserStatus.DELETED) {
+            throw new IllegalArgumentException("탈퇴한 회원은 로그인할 수 없습니다.");
+        }
 
         if (!passwordEncoder.matches(signInDto.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
