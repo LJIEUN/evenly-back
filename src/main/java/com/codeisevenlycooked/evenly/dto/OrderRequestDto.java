@@ -3,6 +3,7 @@ package com.codeisevenlycooked.evenly.dto;
 import com.codeisevenlycooked.evenly.entity.PaymentMethod;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,6 +28,6 @@ public class OrderRequestDto {
 
     private String deliveryMessage;
 
-    @NotBlank(message = "결제 방법은 필수 입력값입니다.")
+    @NotNull(message = "결제 방법은 필수 입력값입니다.")
     private PaymentMethod paymentMethod;
 }

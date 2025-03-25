@@ -44,14 +44,14 @@ public class OrderController {
         return ResponseEntity.ok(orders);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<OrderResponseDto> getOrderById(
-            @RequestHeader(value = "Authorization", required = false) String token, @PathVariable Long id) {
+    @GetMapping("/{orderNumber}")
+    public ResponseEntity<OrderResponseDto> getOrderByOrderNumber(
+            @RequestHeader(value = "Authorization", required = false) String token, @PathVariable String orderNumber) {
 
         String accessToken = jwtUtil.resolveToken(token);
         String userId = jwtUtil.getUserIdFromToken(accessToken);
 
-        OrderResponseDto order = orderService.getOrderById(userId, id);
+        OrderResponseDto order = orderService.getOrderByOrderNumber(userId, orderNumber);
         return ResponseEntity.ok(order);
     }
 }
