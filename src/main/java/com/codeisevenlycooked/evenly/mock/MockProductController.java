@@ -15,9 +15,6 @@ import java.util.List;
 @RequestMapping("/mock/products")
 public class MockProductController {
 
-    @Value("${proxy.server.url}")
-    private String proxyServerUrl;
-
     @GetMapping
     public ResponseEntity<List<MockProductResponse>> getProducts() {
         List<MockProductResponse> products = List.of(
@@ -40,13 +37,13 @@ public class MockProductController {
                         "44\n" +
                         "Supply:\n" +
                         "5V, 2A",
-                        getProxyImageUrl("https://www.hay.com/img_20240404083132/globalassets/inriver/integration/service/ae378-b508_apollo-portable-white_gb_1220x1220_brandvariant.jpg?w=600"),
+                        "https://www.hay.com/img_20240404083132/globalassets/inriver/integration/service/ae378-b508_apollo-portable-white_gb_1220x1220_brandvariant.jpg?w=600",
                         "Lighting", 10, "AVAILABLE"),
                 new MockProductResponse(2L, "Barro Plate-Set of 2-Ø18-Dark blue", 35000, "Color:\n" +
                         "Dark blue" +
                         "Size:\n" +
                         "D18\n",
-                        getProxyImageUrl("https://www.hay.com/img_20230907111544/globalassets/inriver/integration/service/ac459-a668-ai60-02au_barro-plate-oe18-set-of-2-dark-blue_gb_1220x1220_brandvariant.jpg?w=600"),
+                        "https://www.hay.com/img_20230907111544/globalassets/inriver/integration/service/ac459-a668-ai60-02au_barro-plate-oe18-set-of-2-dark-blue_gb_1220x1220_brandvariant.jpg?w=600",
                         "Kitchen", 15, "AVAILABLE")
         );
         return ResponseEntity.ok(products);
@@ -58,13 +55,9 @@ public class MockProductController {
                 "Dark blue" +
                 "Size:\n" +
                 "D18\n",
-                getProxyImageUrl("https://www.hay.com/img_20230907111544/globalassets/inriver/integration/service/ac459-a668-ai60-02au_barro-plate-oe18-set-of-2-dark-blue_gb_1220x1220_brandvariant.jpg?w=600"),
+                "https://www.hay.com/img_20230907111544/globalassets/inriver/integration/service/ac459-a668-ai60-02au_barro-plate-oe18-set-of-2-dark-blue_gb_1220x1220_brandvariant.jpg?w=600",
                 "Kitchen", 15, "AVAILABLE");
         return ResponseEntity.ok(product);
-    }
-
-    private String getProxyImageUrl(String imageUrl) {
-        return proxyServerUrl + "/proxy-image?imageUrl=" + imageUrl;  // 환경 변수로 설정된 프록시 서버 URL을 사용
     }
 }
 
