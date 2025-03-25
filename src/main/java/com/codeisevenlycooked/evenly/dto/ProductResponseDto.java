@@ -4,13 +4,15 @@ import com.codeisevenlycooked.evenly.entity.Category;
 import com.codeisevenlycooked.evenly.entity.Product;
 import com.codeisevenlycooked.evenly.entity.ProductStatus;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 public class ProductResponseDto {
     private final Long id;
     private final String name;
     private final int price;
-    private final String imageUrl;
+    @Setter
+    private String imageUrl;
     private final Category category;
     private final ProductStatus status;
 
