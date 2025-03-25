@@ -42,6 +42,7 @@ public class CartService {
 
         List<CartItemResponseDto> items = cartItems.stream()
                 .map(cartItem -> new CartItemResponseDto(
+                        cartItem.getId(),
                         cartItem.getProduct().getId(),
                         cartItem.getProduct().getName(),
                         cartItem.getProduct().getImageUrl(),
