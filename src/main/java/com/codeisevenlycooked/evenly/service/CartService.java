@@ -30,7 +30,11 @@ public class CartService {
     private final CartItemRepository cartItemRepository;
     private final ProductRepository productRepository;
 
-    public CartResponseDto getCart(User user) {
+    public CartResponseDto getCart(String userId) {
+
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
         Cart cart = cartRepository.findByUser(user)
                 .orElseThrow(() -> new IllegalArgumentException("장바구니가 비었습니다."));
 
@@ -53,7 +57,10 @@ public class CartService {
     }
 
     /* 장바구니 상품 추가 */
-    public void addCart(User user, CartItemDto cartItemDto) {
+    public void addCart(String userId, CartItemDto cartItemDto) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
         Cart cart = cartRepository.findByUser(user)
                 .orElseGet(() -> cartRepository.save(Cart.builder().user(user).build()));
 
@@ -79,7 +86,10 @@ public class CartService {
     }
 
     /* 장바구니 상품 수량 수정 */
-    public void UpdateQuantityCart(User user, Long itemId, int quantity) {
+    public void UpdateQuantityCart(String userId, Long itemId, int quantity) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
         CartItem cartItem = cartItemRepository.findById(itemId)
                 .orElseThrow(() -> new IllegalArgumentException("상품 목록이 없습니다."));
 
@@ -92,7 +102,10 @@ public class CartService {
     }
 
     /* 장바구니 상품 삭제 */
-    public void DeleteCartItem(User user, Long itemId) {
+    public void DeleteCartItem(String userId, Long itemId) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
         CartItem cartItem = cartItemRepository.findById(itemId)
                 .orElseThrow(() -> new IllegalArgumentException("상품 목록이 없습니다."));
 
