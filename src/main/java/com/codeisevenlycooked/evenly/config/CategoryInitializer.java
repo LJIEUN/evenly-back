@@ -2,7 +2,6 @@ package com.codeisevenlycooked.evenly.config;
 
 import com.codeisevenlycooked.evenly.entity.Category;
 import com.codeisevenlycooked.evenly.repository.CategoryRepository;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;

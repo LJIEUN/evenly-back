@@ -25,8 +25,8 @@ public class JwtUtil {
                    @Value("${jwt.expiration_time}") long accessTokenExpireTime) {
         this.accessKey = Keys.hmacShaKeyFor(accessSecretKey.getBytes());
         this.refreshKey = Keys.hmacShaKeyFor(refreshSecretKey.getBytes());
-        this.accessTokenExpireTime = accessTokenExpireTime * 1000L * 60;
-        this.refreshTokenExpireTime = this.accessTokenExpireTime * 2;
+        this.accessTokenExpireTime = accessTokenExpireTime * 60 * 1000L; //15분
+        this.refreshTokenExpireTime = 3 * 24 * 60 * 60 * 1000L; //3일
     }
 
     //토큰 생성

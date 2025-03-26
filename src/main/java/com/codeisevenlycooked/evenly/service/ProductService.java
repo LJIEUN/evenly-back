@@ -1,6 +1,6 @@
 package com.codeisevenlycooked.evenly.service;
 
-import com.codeisevenlycooked.evenly.controller.image.ImageController;
+
 import com.codeisevenlycooked.evenly.dto.AdminProductDto;
 import com.codeisevenlycooked.evenly.dto.ProductResponseDto;
 import com.codeisevenlycooked.evenly.entity.Category;
@@ -10,8 +10,6 @@ import com.codeisevenlycooked.evenly.repository.CategoryRepository;
 import com.codeisevenlycooked.evenly.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
@@ -24,15 +22,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
 
-    //상품 목록 조회 부분
-//    public List<ProductResponseDto> getAllProducts() {
-//        return productRepository.findByStatusNot(ProductStatus.DELETED).stream()
-//                .map(ProductResponseDto::new)
-//                .toList();
-//    }
-    private final ImageController imageController;
-
-    // 페이지네이션, 카테고리 추가
+    //상품 목록 조회 부분 - 페이지네이션, 카테고리 추가
     public Page<ProductResponseDto> getProductsByCategory(Long categoryId, int page) {
         Pageable pageable = PageRequest.of(page - 1, 12, Sort.by("id").descending());
 
@@ -49,11 +39,7 @@ public class ProductService {
             products = productRepository.findByStatusNot(ProductStatus.DELETED, pageable);
         }
 
-        return products.map(product -> {
-            ProductResponseDto responseDto = new ProductResponseDto(product);
-            responseDto.setImageUrl(getProxyImageUrl(product.getImageUrl()));
-            return responseDto;
-        });
+        return products.map(ProductResponseDto::new);
     }
 
     //상품 상세 조회 부분 ( = 단일 상품 조회)
@@ -61,14 +47,13 @@ public class ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
 
-        ProductResponseDto responseDto = new ProductResponseDto(product);
-        responseDto.setImageUrl(getProxyImageUrl(product.getImageUrl()));
-        return responseDto;
+        return new ProductResponseDto(product);
     }
 
     /**
      * admin
      */
+
     @Transactional
     public List<Product> getAllProductsForAdmin() {
         return productRepository.findAll();
@@ -148,17 +133,5 @@ public class ProductService {
 
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
-    }
-
-    /**
-     * image 프록시 처리
-     */
-
-
-    @Value("${proxy.server.url}")
-    private String proxyServerUrl;
-
-    public String getProxyImageUrl(String imageUrl) {
-        return proxyServerUrl + "/proxy-image?imageUrl=" + imageUrl;
     }
 }

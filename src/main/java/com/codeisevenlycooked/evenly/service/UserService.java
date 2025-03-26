@@ -25,6 +25,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
+    private final RedisService redisService;
 
     public UserInfoDto getMyInfo(String accessToken) {
         String userId = jwtUtil.getUserIdFromToken(accessToken);
@@ -55,6 +56,8 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
         user.deletedAccount();
+
+        redisService.add(accessToken, "BLACKLISTED", 1L);
     }
 
     /**
