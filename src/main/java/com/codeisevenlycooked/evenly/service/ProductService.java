@@ -93,8 +93,8 @@ public class ProductService {
                 .orElseThrow(() -> new RuntimeException("카테고리를 찾을 수 없습니다."));
 
         ProductStatus status = ProductStatus.valueOf(productDto.getStatus());
-        if (existingProduct.getStatus() == ProductStatus.DELETED) {
-            status = existingProduct.getStatus();
+        if (productDto.getStatus().equals("DELETED")) {
+            status = ProductStatus.DELETED;
         } else if (productDto.getStock() == 0) {
             status = ProductStatus.SOLD_OUT;
         }
