@@ -1,6 +1,7 @@
 package com.codeisevenlycooked.evenly.service;
 
 import com.codeisevenlycooked.evenly.config.security.JwtUtil;
+import com.codeisevenlycooked.evenly.dto.AdminUserUpdateDto;
 import com.codeisevenlycooked.evenly.dto.UpdatePasswordDto;
 import com.codeisevenlycooked.evenly.dto.UserInfoDto;
 import com.codeisevenlycooked.evenly.entity.User;
@@ -89,6 +90,66 @@ public class UserService {
         userRepository.deleteAll(usersToDelete);
 
         log.info("삭제된 휴면 회원 ID 목록: {}", usersToDelete.stream().map(User::getUserId).toList());
+    }
+
+    /**
+     * admin
+     */
+
+    @Transactional
+    public List<User>  getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public User getByUserId(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+    }
+
+    @Transactional
+    public void updateUser(Long userId, AdminUserUpdateDto userUpdateDto) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
+        String encodedPassword = userUpdateDto.getPassword() != null && !userUpdateDto.getPassword().isEmpty()
+                ? passwordEncoder.encode(userUpdateDto.getPassword())
+                : user.getPassword();
+
+        UserStatus updatedStatus = userUpdateDto.getStatus() != null ? userUpdateDto.getStatus() : user.getStatus();
+        LocalDateTime updatedDeletedAt = null;
+        if (updatedStatus == UserStatus.DELETED) {
+            updatedDeletedAt = LocalDateTime.now();
+        } else if (updatedStatus == UserStatus.ACTIVE) {
+            updatedDeletedAt = null;
+        } else {
+            updatedDeletedAt = user.getDeletedAt();
+        }
+
+        User updatedUser = user.toBuilder()
+                .password(encodedPassword)
+                .name(userUpdateDto.getName() != null ? userUpdateDto.getName() : user.getName())
+                .status(updatedStatus)
+                .role(userUpdateDto.getRole() != null ? userUpdateDto.getRole() : user.getRole())
+                .deletedAt(updatedDeletedAt)
+                .build();
+
+        userRepository.save(updatedUser);
+    }
+
+
+    @Transactional
+    public void softDeleteUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
+        user.deletedAccount();
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void hardDeleteUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
+        userRepository.delete(user);
     }
 
 }

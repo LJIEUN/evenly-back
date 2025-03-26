@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}">
+
+<head>
+    <title>evenly-회원 수정</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+</head>
+
+<body>
+<section layout:fragment="content">
+    <div class="container py-2">
+        <h2>회원 수정</h2>
+
+        <form th:action="@{/admin/users/{id}/edit(id=${user.id})}" th:object="${user}" method="post">
+
+            <div class="mb-3">
+                <label class="form-label">사용자 ID</label>
+                <input type="text" class="form-control" th:field="*{userId}" disabled>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">비밀번호</label>
+                <input type="password" class="form-control" th:field="*{password}" placeholder="변경하지 않으면 비워 두세요">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">이름</label>
+                <input type="text" class="form-control" th:field="*{name}" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">상태</label>
+                <select class="form-control" th:field="*{status}">
+                    <option value="ACTIVE" th:selected="${user.status == 'ACTIVE'}">ACTIVE</option>
+                    <option value="INACTIVE" th:selected="${user.status == 'INACTIVE'}">INACTIVE</option>
+                    <option value="BANNED" th:selected="${user.status == 'BANNED'}">BANNED</option>
+                    <option value="DELETED" th:selected="${user.status == 'DELETED'}">DELETED</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">역할</label>
+                <select class="form-control" th:field="*{role}">
+                    <option value="USER" th:selected="${user.role == 'USER'}">USER</option>
+                    <option value="ADMIN" th:selected="${user.role == 'ADMIN'}">ADMIN</option>
+                    <option value="SUPER_AD" th:selected="${user.role == 'SUPER_AD'}">SUPER_AD</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">삭제일</label>
+                <input type="text" class="form-control" th:value="${user.deletedAt != null ? #temporals.format(user.deletedAt, 'yyyy-MM-dd HH:mm:ss') : ''}" disabled>
+            </div>
+
+            <div class="mt-3 d-flex justify-content-between">
+                <div>
+                    <button type="submit" class="btn btn-success">저장</button>
+                    <a href="/admin/users" class="btn btn-secondary">취소</a>
+                </div>
+                <div th:if="${user.id != null}" class="text-end">
+                    <form th:action="@{'/admin/users/' + ${user.id} + '/delete'}" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-danger">삭제</button>
+                    </form>
+                    <form th:action="@{'/admin/users/' + ${user.id} + '/permanent-delete'}" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-dark">영구 삭제</button>
+                    </form>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+</body>
+</html>

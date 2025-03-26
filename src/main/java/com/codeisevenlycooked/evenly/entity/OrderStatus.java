@@ -1,7 +1,7 @@
 package com.codeisevenlycooked.evenly.entity;
 
 public enum OrderStatus {
-    PAYMENT_PENDING,
+    NOT_PAID,
     PENDING,
     SHIPPED,
     DELIVERED,

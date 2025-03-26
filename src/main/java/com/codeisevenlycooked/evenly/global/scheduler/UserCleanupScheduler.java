@@ -1,6 +1,9 @@
 package com.codeisevenlycooked.evenly.global.scheduler;
 
+import com.codeisevenlycooked.evenly.entity.Order;
+import com.codeisevenlycooked.evenly.entity.OrderStatus;
 import com.codeisevenlycooked.evenly.entity.User;
+import com.codeisevenlycooked.evenly.repository.OrderRepository;
 import com.codeisevenlycooked.evenly.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserCleanupScheduler {
     private final UserRepository userRepository;
+    private final OrderRepository orderRepository;
 
     //서버 시작 시 삭제 실행
     @EventListener(ApplicationReadyEvent.class)
@@ -25,6 +29,8 @@ public class UserCleanupScheduler {
     public void cleanUpOnStartup() {
         log.info("서버 시작: 회원 정리 실행!");
         deleteExpiredAccounts();
+        log.info("서버 시작: 미결제 주문 삭제!");
+        deleteExpiredOrders();
     }
 
     //매일 새벽 3시 실행
@@ -43,5 +49,15 @@ public class UserCleanupScheduler {
 
             userRepository.deleteAll(usersToDelete);
         }
+    }
+
+    @Scheduled(cron = "0 30 0 * * ?")
+    @Transactional
+    public void deleteExpiredOrders() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime oneDayAgo = now.minusDays(1);
+
+        List<Order> expiredOrders = orderRepository.findByStatusAndCreatedAtBefore(OrderStatus.NOT_PAID, oneDayAgo);
+        orderRepository.deleteAll(expiredOrders);
     }
 }
