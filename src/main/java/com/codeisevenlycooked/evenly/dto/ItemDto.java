@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CartItemDto {
+public class ItemDto {
 
     @NotNull(message = "상품 ID는 필수입니다.")
     private Long productId;

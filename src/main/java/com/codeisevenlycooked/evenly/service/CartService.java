@@ -1,6 +1,6 @@
 package com.codeisevenlycooked.evenly.service;
 
-import com.codeisevenlycooked.evenly.dto.CartItemDto;
+import com.codeisevenlycooked.evenly.dto.ItemDto;
 import com.codeisevenlycooked.evenly.dto.CartItemResponseDto;
 import com.codeisevenlycooked.evenly.dto.CartResponseDto;
 import com.codeisevenlycooked.evenly.entity.Cart;
@@ -12,10 +12,7 @@ import com.codeisevenlycooked.evenly.repository.CartRepository;
 import com.codeisevenlycooked.evenly.repository.ProductRepository;
 import com.codeisevenlycooked.evenly.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -58,21 +55,21 @@ public class CartService {
     }
 
     /* 장바구니 상품 추가 */
-    public void addCart(String userId, CartItemDto cartItemDto) {
+    public void addCart(String userId, ItemDto itemDto) {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
         Cart cart = cartRepository.findByUser(user)
                 .orElseGet(() -> cartRepository.save(Cart.builder().user(user).build()));
 
-        Product product = productRepository.findById(cartItemDto.getProductId())
+        Product product = productRepository.findById(itemDto.getProductId())
                 .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 없습니다."));
 
         CartItem cartItem = cartItemRepository.findByCartAndProduct(cart, product).orElse(null);
 
         /* 이미 수량이 있을때 수량 증가하는 부분 */
         if (cartItem != null) {
-            cartItem.setQuantity(cartItem.getQuantity() + cartItemDto.getQuantity());
+            cartItem.setQuantity(cartItem.getQuantity() + itemDto.getQuantity());
             cartItemRepository.save(cartItem);
         }
         /* 수량이 존재 하지 않을 때 새로 추가하는 부분 */
@@ -80,7 +77,7 @@ public class CartService {
             CartItem newItem = CartItem.builder()
                     .cart(cart)
                     .product(product)
-                    .quantity(cartItemDto.getQuantity())
+                    .quantity(itemDto.getQuantity())
                     .build();
             cartItemRepository.save(newItem);
         }
