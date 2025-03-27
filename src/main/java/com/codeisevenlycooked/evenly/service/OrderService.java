@@ -42,6 +42,8 @@ public class OrderService {
                 .map(itemDto -> {
                     Product product = productRepository.findById(itemDto.getProductId())
                             .orElseThrow(() -> new RuntimeException("상품이 없습니다."));
+
+                    //재고 0이거나, 요청 수량 > 재고 수량 예외처리
                     if (product.getStock() <= 0 || itemDto.getQuantity() > product.getStock()) {
                         throw new IllegalArgumentException("상품 `" + product.getName() + "`의 재고가 부족합니다.");
                     }
@@ -101,6 +103,10 @@ public class OrderService {
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
         Order order = orderRepository.findById(requestDto.getOrderId())
                 .orElseThrow(() -> new RuntimeException("주문을 찾을 수 없습니다."));
+
+        if (order.getStatus() != OrderStatus.NOT_PAID) {
+            throw new IllegalArgumentException("이미 결제가 진행된 주문입니다.");
+        }
 
         boolean isPaymentSuccessful = Math.random() < 0.95;
 
