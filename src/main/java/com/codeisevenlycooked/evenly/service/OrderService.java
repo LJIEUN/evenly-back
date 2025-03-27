@@ -1,115 +1,211 @@
 package com.codeisevenlycooked.evenly.service;
 
-import com.codeisevenlycooked.evenly.dto.OrderItemDto;
-import com.codeisevenlycooked.evenly.dto.OrderItemResponseDto;
-import com.codeisevenlycooked.evenly.dto.OrderRequestDto;
-import com.codeisevenlycooked.evenly.dto.OrderResponseDto;
+import com.codeisevenlycooked.evenly.dto.*;
 import com.codeisevenlycooked.evenly.entity.*;
 import com.codeisevenlycooked.evenly.repository.OrderRepository;
 import com.codeisevenlycooked.evenly.repository.ProductRepository;
 import com.codeisevenlycooked.evenly.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderService {
+
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
 
-    @Transactional
-    public OrderResponseDto createOrder(String userId, OrderRequestDto requestDto) {
+    public OrderCreationResponseDto createOrder(String userId, List<ItemDto> itemDtoList) {
+
         User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
-        String orderNumber = generateOrderNumber();
+        //초기화
+        final BigDecimal[] totalPrice = {BigDecimal.ZERO};
+        BigDecimal reducedPrice = BigDecimal.ZERO;
+        BigDecimal shipmentFee = BigDecimal.valueOf(3000);
 
-        Order order = new Order(
-                orderNumber,
-                user,
-                BigDecimal.ZERO,
-                requestDto.getReceiverName(),
-                requestDto.getAddress(),
-                requestDto.getMobile(),
-                requestDto.getDeliveryMessage(),
-                requestDto.getPaymentMethod().name()
-        );
+        List<OrderItem> orderItems = itemDtoList.stream()
+                .map(itemDto -> {
+                    Product product = productRepository.findById(itemDto.getProductId())
+                            .orElseThrow(() -> new RuntimeException("상품이 없습니다."));
 
-        BigDecimal totalPrice = BigDecimal.ZERO;
+                    //재고 0이거나, 요청 수량 > 재고 수량 예외처리
+                    if (product.getStock() <= 0 || itemDto.getQuantity() > product.getStock()) {
+                        throw new IllegalArgumentException("상품 `" + product.getName() + "`의 재고가 부족합니다.");
+                    }
 
-        for (OrderItemDto itemDto : requestDto.getOrderItems()) {
-            Product product = productRepository.findById(itemDto.getProductId())
-                    .orElseThrow(() -> new IllegalArgumentException("상품이 없습니다."));
+                    BigDecimal itemTotalPrice = BigDecimal.valueOf(product.getPrice()).multiply(BigDecimal.valueOf(itemDto.getQuantity()));
+                    totalPrice[0] = totalPrice[0].add(itemTotalPrice);
 
-            if (product.getStock() <= 0 || product.getStatus() == ProductStatus.SOLD_OUT ||
-                    itemDto.getQuantity() > product.getStock()) {
-                throw new IllegalArgumentException("상품 `" + product.getName() + "`의 재고가 부족합니다.");
-            }
+                    OrderItem orderItem = new OrderItem(product, itemDto.getQuantity(), BigDecimal.valueOf(product.getPrice()));
+                    orderItem.setOrder(null);
+                    return orderItem;
+                }).toList();
 
-            BigDecimal itemTotalPrice = BigDecimal.valueOf(product.getPrice())
-                    .multiply(BigDecimal.valueOf(itemDto.getQuantity()));
-            totalPrice = totalPrice.add(itemTotalPrice);
+        // 할인 가격(추후 적용)
+//        reducedPrice = totalPrice[0].multiply(BigDecimal.valueOf(0.1)); // 10% 할인
 
-            order.addOrderItem(new OrderItem(product, itemDto.getQuantity(), BigDecimal.valueOf(product.getPrice())));
-        }
+        BigDecimal totalTotalPrice = totalPrice[0].subtract(reducedPrice).add(shipmentFee);
 
-        order.setTotalPrice(totalPrice);
+        Order order = Order.builder()
+                .user(user)
+                .totalPrice(totalPrice[0])
+                .reducedPrice(reducedPrice)
+                .shipmentFee(shipmentFee)
+                .totalTotalPrice(totalTotalPrice)
+                .status(OrderStatus.NOT_PAID)
+                .orderItems(orderItems)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        orderItems.forEach(orderItem -> orderItem.setOrder(order));
+
         orderRepository.save(order);
 
-        return convertToResponseDto(order);
-
-    }
-
-    @Transactional
-    public List<OrderResponseDto> getOrders (String userId){
-        User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-
-        List<Order> orders = orderRepository.findByUser(user);
-        return orders.stream().map(this::convertToResponseDto).toList();
-    }
-
-    @Transactional
-    public OrderResponseDto getOrderByOrderNumber (String userId, String orderNumber){
-        User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-
-        Order order = orderRepository.findByOrderNumberAndUser(orderNumber, user)
-                .orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾을 수 없습니다."));
-
-        return convertToResponseDto(order);
-    }
-
-    private OrderResponseDto convertToResponseDto (Order order){
-        List<OrderItemResponseDto> orderItems = order.getOrderItems().stream()
+        List<OrderItemResponseDto> itemResponseDto = order.getOrderItems().stream()
                 .map(item -> new OrderItemResponseDto(
+                        item.getId(),
                         item.getProduct().getId(),
                         item.getProduct().getName(),
+                        item.getProduct().getImageUrl(),
+                        item.getProduct().getPrice(),
                         item.getQuantity(),
-                        item.getPrice()))
+                        item.totalPrice()
+                )).toList();
+
+        return new OrderCreationResponseDto(
+                order.getId(),
+                itemResponseDto,
+                order.getTotalPrice(),
+                order.getReducedPrice(),
+                order.getShipmentFee(),
+                order.getTotalTotalPrice()
+        );
+    }
+
+    @Transactional
+    public OrderResponseDto processPayment(String userId, OrderRequestDto requestDto) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        Order order = orderRepository.findById(requestDto.getOrderId())
+                .orElseThrow(() -> new RuntimeException("주문을 찾을 수 없습니다."));
+
+        if (order.getStatus() != OrderStatus.NOT_PAID) {
+            throw new IllegalArgumentException("이미 결제가 진행된 주문입니다.");
+        }
+
+        boolean isPaymentSuccessful = Math.random() < 0.95;
+
+        if (isPaymentSuccessful) {
+            String orderNumber = generateOrderNumber();
+
+            order = order.toBuilder()
+                    .orderNumber(orderNumber)
+                    .status(OrderStatus.PENDING)
+                    .receiverName(requestDto.getReceiverName())
+                    .address(requestDto.getAddress())
+                    .mobile(requestDto.getMobile())
+                    .deliveryMessage(requestDto.getDeliveryMessage())
+                    .paymentMethod(requestDto.getPaymentMethod())
+                    .createdAt(LocalDateTime.now())
+                    .build();
+
+            //재고 감소
+            for (OrderItem orderItem : order.getOrderItems()) {
+                Product product = orderItem.getProduct();
+                product.changeStock(product.getStock() - orderItem.getQuantity());
+                productRepository.save(product);
+            }
+
+            orderRepository.save(order);
+
+            return convertToOrderResponseDto(order);
+        } else {
+            return convertToOrderResponseDto(order);
+        }
+    }
+
+    @Transactional
+    public List<OrderResponseDto> getOrderListAlreadyPaid(String userId) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자가 없습니다."));
+
+        List<Order> orders = orderRepository.findByUser(user);
+
+        List<Order> filteredOrders = orders.stream()
+                .filter(order -> order.getOrderNumber() != null)
                 .toList();
 
-        return OrderResponseDto.builder()
-                .orderId(order.getId())
-                .orderNumber(order.getOrderNumber())
-                .totalPrice(order.getTotalPrice())
-                .status(order.getStatus().name())
-                .receiverName(order.getReceiverName())
-                .address(order.getAddress())
-                .mobile(order.getMobile())
-                .deliveryMessage(order.getDeliveryMessage())
-                .paymentMethod(order.getPaymentMethod())
-                .createdAt(order.getCreatedAt())
-                .orderItems(orderItems)
-                .build();
+        if (filteredOrders.isEmpty()) {
+            throw new IllegalArgumentException("주문 목록이 비어있습니다.");
+        }
+
+        return filteredOrders.stream()
+                .map(this::convertToOrderResponseDto)
+                .toList();
+    }
+
+    @Transactional
+    public OrderResponseDto getOrderDetail(String userId, String orderNumber) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자가 없습니다."));
+
+        Order order = orderRepository.findByOrderNumberAndUser(orderNumber, user)
+                .orElseThrow(() -> new RuntimeException("주문을 찾을 수 없습니다."));
+
+        return convertToOrderResponseDto(order);
+    }
+
+    @Transactional
+    private OrderResponseDto convertToOrderResponseDto(Order order) {
+        List<OrderItemResponseDto> orderItems = order.getOrderItems().stream()
+                .map(item -> new OrderItemResponseDto(
+                        item.getId(),
+                        item.getProduct().getId(),
+                        item.getProduct().getName(),
+                        item.getProduct().getImageUrl(),
+                        item.getProduct().getPrice(),
+                        item.getQuantity(),
+                        item.totalPrice()
+                ))
+                .toList();
+
+        log.info("Order items: {}", orderItems);
+
+        OrderCreationResponseDto orderCreationResponseDto = new OrderCreationResponseDto(
+                order.getId(),
+                orderItems,
+                order.getTotalPrice(),
+                order.getReducedPrice(),
+                order.getShipmentFee(),
+                order.getTotalTotalPrice()
+        );
+
+        return new OrderResponseDto(
+                orderCreationResponseDto,
+                order.getOrderNumber(),
+                order.getStatus(),
+                order.getReceiverName(),
+                order.getAddress(),
+                order.getMobile(),
+                order.getDeliveryMessage(),
+                order.getPaymentMethod(),
+                order.getCreatedAt()
+        );
     }
 
     private String generateOrderNumber() {

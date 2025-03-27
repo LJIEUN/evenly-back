@@ -1,6 +1,7 @@
 package com.codeisevenlycooked.evenly.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,6 +11,7 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "order_items")
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor
 public class OrderItem {
 
@@ -17,17 +19,21 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", nullable = false)
     @Setter
+    @ManyToOne
+    @JoinColumn(name = "order_id")
     private Order order;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "product_id")
     private Product product;
 
     private int quantity;
     private BigDecimal price;
+
+    public BigDecimal totalPrice() {
+        return BigDecimal.valueOf(product.getPrice()).multiply(BigDecimal.valueOf(quantity));
+    }
 
     public OrderItem(Product product, int quantity, BigDecimal price) {
         this.product = product;

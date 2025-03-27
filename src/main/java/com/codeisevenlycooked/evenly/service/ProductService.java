@@ -67,6 +67,8 @@ public class ProductService {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new RuntimeException("카테고리를 찾을 수 없습니다."));
 
+        ProductStatus status = productDto.getStock() == 0 ? ProductStatus.SOLD_OUT : ProductStatus.valueOf(productDto.getStatus());
+
         Product product = Product.builder()
                 .name(productDto.getName())
                 .price(productDto.getPrice())
@@ -74,7 +76,7 @@ public class ProductService {
                 .imageUrl(productDto.getImageUrl())
                 .category(category)
                 .stock(productDto.getStock())
-                .status(ProductStatus.valueOf(productDto.getStatus())) // ENUM 변환
+                .status(status) // ENUM 변환
                 .build();
 
         productRepository.save(product);
@@ -91,7 +93,9 @@ public class ProductService {
                 .orElseThrow(() -> new RuntimeException("카테고리를 찾을 수 없습니다."));
 
         ProductStatus status = ProductStatus.valueOf(productDto.getStatus());
-        if (productDto.getStock() == 0) {
+        if (productDto.getStatus().equals("DELETED")) {
+            status = ProductStatus.DELETED;
+        } else if (productDto.getStock() == 0) {
             status = ProductStatus.SOLD_OUT;
         }
 

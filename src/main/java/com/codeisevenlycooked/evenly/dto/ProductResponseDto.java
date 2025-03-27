@@ -11,17 +11,20 @@ public class ProductResponseDto {
     private final Long id;
     private final String name;
     private final int price;
-    @Setter
-    private String imageUrl;
+    private final String description;
+    private final String imageUrl;
     private final Category category;
     private final ProductStatus status;
+    private final int stock;
 
     public ProductResponseDto(Product product) {
         this.id = product.getId();
         this.name = product.getName();
         this.price = product.getPrice();
+        this.description = product.getDescription();
         this.imageUrl = product.getImageUrl();
         this.category = product.getCategory();
         this.status = product.getStatus();
+        this.stock = product.getStock();
     }
 }

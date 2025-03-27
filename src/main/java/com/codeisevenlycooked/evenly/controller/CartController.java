@@ -1,14 +1,12 @@
 package com.codeisevenlycooked.evenly.controller;
 
 import com.codeisevenlycooked.evenly.config.security.JwtUtil;
-import com.codeisevenlycooked.evenly.dto.CartItemDto;
+import com.codeisevenlycooked.evenly.dto.ItemDto;
 import com.codeisevenlycooked.evenly.dto.CartResponseDto;
 import com.codeisevenlycooked.evenly.service.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/cart")
@@ -31,11 +29,11 @@ public class CartController {
     @PostMapping
     public ResponseEntity<String> addCart(
             @RequestHeader(value = "Authorization", required = false) String token,
-            @RequestBody CartItemDto cartItemDto) {
+            @RequestBody ItemDto itemDto) {
         String accessToken = jwtUtil.resolveToken(token);
         String userId = jwtUtil.getUserIdFromToken(accessToken);
 
-        cartService.addCart(userId, cartItemDto);
+        cartService.addCart(userId, itemDto);
         return ResponseEntity.ok("장바구니에 상품이 추가 되었습니다!");
     }
 
@@ -43,11 +41,11 @@ public class CartController {
     public ResponseEntity<String> UpdateQuantityCart(
             @RequestHeader(value = "Authorization", required = false) String token,
             @PathVariable Long itemId,
-            @RequestBody CartItemDto cartItemDto) {
+            @RequestBody ItemDto itemDto) {
         String accessToken = jwtUtil.resolveToken(token);
         String userId = jwtUtil.getUserIdFromToken(accessToken);
 
-        cartService.UpdateQuantityCart(userId, itemId, cartItemDto.getQuantity());
+        cartService.UpdateQuantityCart(userId, itemId, itemDto.getQuantity());
         return ResponseEntity.ok("수량이 수정 되었습니다.");
     }
 
