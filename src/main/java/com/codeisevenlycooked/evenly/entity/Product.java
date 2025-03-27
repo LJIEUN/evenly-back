@@ -42,7 +42,7 @@ public class Product {
     @Enumerated(EnumType.STRING)
     private ProductStatus status;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TIMESTAMP NULL")
     @CreationTimestamp
     private LocalDateTime createdAt;
 
