@@ -8,16 +8,13 @@ import com.codeisevenlycooked.evenly.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @Service
@@ -183,8 +180,6 @@ public class OrderService {
                         item.totalPrice()
                 ))
                 .toList();
-
-        log.info("Order items: {}", orderItems);
 
         OrderCreationResponseDto orderCreationResponseDto = new OrderCreationResponseDto(
                 order.getId(),
