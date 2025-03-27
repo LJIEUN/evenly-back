@@ -129,7 +129,7 @@ public class OrderService {
                     throw new RuntimeException("재고가 부족합니다.");
                 }
 
-                product.changeStock(product.getStock() - orderItem.getQuantity());
+                product.changeStock(orderItem.getQuantity());
                 productRepository.save(product);
 
                 updateCartIfExists(user, product.getId(), orderItem.getQuantity());
