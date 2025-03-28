@@ -4,6 +4,7 @@ import com.codeisevenlycooked.evenly.config.security.JwtUtil;
 import com.codeisevenlycooked.evenly.dto.ItemDto;
 import com.codeisevenlycooked.evenly.dto.CartResponseDto;
 import com.codeisevenlycooked.evenly.service.CartService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +30,7 @@ public class CartController {
     @PostMapping
     public ResponseEntity<String> addCart(
             @RequestHeader(value = "Authorization", required = false) String token,
-            @RequestBody ItemDto itemDto) {
+            @RequestBody @Valid ItemDto itemDto) {
         String accessToken = jwtUtil.resolveToken(token);
         String userId = jwtUtil.getUserIdFromToken(accessToken);
 
@@ -41,7 +42,7 @@ public class CartController {
     public ResponseEntity<String> UpdateQuantityCart(
             @RequestHeader(value = "Authorization", required = false) String token,
             @PathVariable Long itemId,
-            @RequestBody ItemDto itemDto) {
+            @RequestBody @Valid ItemDto itemDto) {
         String accessToken = jwtUtil.resolveToken(token);
         String userId = jwtUtil.getUserIdFromToken(accessToken);
 
@@ -59,5 +60,4 @@ public class CartController {
         cartService.DeleteCartItem(userId, itemId);
         return ResponseEntity.ok("상품이 삭제 되었습니다.");
     }
-
 }
