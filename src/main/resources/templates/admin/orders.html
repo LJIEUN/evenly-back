@@ -27,7 +27,7 @@
         <td th:text="${order.id}"></td>
         <td th:text="${order.orderNumber}"></td>
         <td th:text="${order.userId}"></td>
-        <td th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA')}"></td> <!-- 가격을 쉼표 형식으로 출력 -->
+        <td th:text="${#numbers.formatDecimal(order.totalPrice, 1, 'COMMA', 0, 'POINT')}"></td> <!-- 가격을 쉼표 형식으로 출력 -->
         <td th:text="${order.status}"></td>
         <td th:text="${#temporals.format(order.createAt, 'yyyy-MM-dd HH:mm:ss')}"></td> <!-- 날짜 형식 지정 -->
         <td>
