@@ -4,6 +4,7 @@ import com.codeisevenlycooked.evenly.config.security.JwtUtil;
 import com.codeisevenlycooked.evenly.dto.SignInDto;
 import com.codeisevenlycooked.evenly.dto.SignUpDto;
 import com.codeisevenlycooked.evenly.dto.TokenResponse;
+import com.codeisevenlycooked.evenly.global.MessageResponse;
 import com.codeisevenlycooked.evenly.service.AuthService;
 import com.codeisevenlycooked.evenly.service.RedisService;
 import io.jsonwebtoken.JwtException;
@@ -25,9 +26,9 @@ public class AuthController {
     private final JwtUtil jwtUtil;
 
     @PostMapping("/signup")
-    public ResponseEntity<String> signUp(@RequestBody @Valid SignUpDto signUpDto) {
+    public ResponseEntity<MessageResponse> signUp(@RequestBody @Valid SignUpDto signUpDto) {
         authService.signUp(signUpDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body("회원가입 성공!");
+        return ResponseEntity.status(HttpStatus.CREATED).body(new MessageResponse("회원가입 성공!"));
     }
 
     @PostMapping("/login")
@@ -53,7 +54,7 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logout(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<MessageResponse> logout(@RequestHeader("Authorization") String token) {
         String accessToken = token.replace("Bearer ", "");
         long expiration = jwtUtil.getExpiredTime(accessToken).getTime() - System.currentTimeMillis();
 
@@ -61,6 +62,6 @@ public class AuthController {
             redisService.add(accessToken, "blacklisted", expiration);
         }
 
-        return ResponseEntity.ok("로그아웃 완료!");
+        return ResponseEntity.ok(new MessageResponse("로그아웃 완료!"));
     }
 }
