@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -136,11 +137,8 @@ public class OrderService {
             }
 
             orderRepository.save(order);
-
-            return convertToOrderResponseDto(order);
-        } else {
-            return convertToOrderResponseDto(order);
         }
+        return convertToOrderResponseDto(order);
     }
 
     @Transactional
@@ -212,8 +210,12 @@ public class OrderService {
 
     private String generateOrderNumber() {
         String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        String orderNumber = date + String.format("%04d", orderRepository.count() + 1);
-        return orderNumber;
+        Long todayCount = orderRepository.countByCreatedAtBetween(
+                LocalDate.now().atStartOfDay(),
+                LocalDate.now().plusDays(1).atStartOfDay()
+        );
+
+        return date + String.format("%04d", todayCount + 1);
     }
 
     private void updateCartIfExists(User user, Long productId, int quantity) {
