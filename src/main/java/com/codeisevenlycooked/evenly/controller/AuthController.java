@@ -25,13 +25,13 @@ public class AuthController {
     private final JwtUtil jwtUtil;
 
     @PostMapping("/signup")
-    public ResponseEntity<String> signUp(@Valid @RequestBody SignUpDto signUpDto) {
+    public ResponseEntity<String> signUp(@RequestBody @Valid SignUpDto signUpDto) {
         authService.signUp(signUpDto);
         return ResponseEntity.status(HttpStatus.CREATED).body("회원가입 성공!");
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody SignInDto signInDto) {
+    public ResponseEntity<?> login(@RequestBody @Valid SignInDto signInDto) {
         String[] tokens = authService.login(signInDto);
         return ResponseEntity.ok()
                 .body(new TokenResponse(tokens[0], tokens[1]));

@@ -7,6 +7,7 @@ import com.codeisevenlycooked.evenly.dto.OrderRequestDto;
 import com.codeisevenlycooked.evenly.dto.OrderResponseDto;
 import com.codeisevenlycooked.evenly.entity.OrderStatus;
 import com.codeisevenlycooked.evenly.service.OrderService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ public class OrderController {
     @PostMapping("/create")
     public ResponseEntity<OrderCreationResponseDto> createOrder(
             @RequestHeader("Authorization") String token,
-            @RequestBody List<ItemDto> itemDto) {
+            @RequestBody @Valid List<ItemDto> itemDto) {
         String accessToken = jwtUtil.resolveToken(token);
         String userId = jwtUtil.getUserIdFromToken(accessToken);
 
@@ -37,7 +38,7 @@ public class OrderController {
     @PostMapping("/payment")
     public ResponseEntity<OrderResponseDto> processPayment(
             @RequestHeader("Authorization") String token,
-            @RequestBody OrderRequestDto orderRequestDto) {
+            @RequestBody @Valid OrderRequestDto orderRequestDto) {
 
         String accessToken = jwtUtil.resolveToken(token);
         String userId = jwtUtil.getUserIdFromToken(accessToken);
