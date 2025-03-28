@@ -6,6 +6,7 @@ import com.codeisevenlycooked.evenly.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -13,7 +14,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -186,6 +187,8 @@ public class OrderService {
                 ))
                 .toList();
 
+        log.info("Order items: {}", orderItems);
+
         OrderCreationResponseDto orderCreationResponseDto = new OrderCreationResponseDto(
                 order.getId(),
                 orderItems,
@@ -238,4 +241,47 @@ public class OrderService {
             }
         }
     }
+
+    /*
+    * admin
+    * */
+
+    /* 전체 주문 조회 */
+    @Transactional
+    public List<AdminListDto> getAllOrdersAdmin() {
+        return orderRepository.findAll(Sort.by(Sort.Direction.ASC, "createdAt"))
+                .stream().map(AdminListDto::new)
+                .collect(Collectors.toList());
+    }
+
+    /* 단일 주문 조회 */
+    @Transactional
+    public AdminListDto getOrderAdmin(Long id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 주문 내역이 없습니다."));
+        return new AdminListDto(order);
+    }
+
+    /* 수정 */
+    @Transactional
+    public void updateOrderAdmin(Long id, AdminListDto adminListDto) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 주문 내역이 없습니다."));
+
+        order.setStatus(adminListDto.getStatus());
+        order.setReceiverName(adminListDto.getReceiverName());
+        order.setAddress(adminListDto.getAddress());
+        order.setMobile(adminListDto.getMobile());
+        order.setDeliveryMessage(adminListDto.getDeliveryMessage());
+        order.setPaymentMethod(adminListDto.getPaymentMethod());
+    }
+
+    /* 삭제 */
+    @Transactional
+    public void deleteOrderAdmin(Long id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 주문 내역이 없습니다."));
+        orderRepository.delete(order);
+    }
+
 }

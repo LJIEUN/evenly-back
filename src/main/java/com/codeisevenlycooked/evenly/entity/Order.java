@@ -1,10 +1,7 @@
 package com.codeisevenlycooked.evenly.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -13,7 +10,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "orders")
-@Getter
+@Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
