@@ -9,7 +9,6 @@ import com.codeisevenlycooked.evenly.entity.UserStatus;
 import com.codeisevenlycooked.evenly.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;

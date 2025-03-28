@@ -42,7 +42,7 @@ public class Product {
     @Enumerated(EnumType.STRING)
     private ProductStatus status;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TIMESTAMP NULL")
     @CreationTimestamp
     private LocalDateTime createdAt;
 
@@ -55,5 +55,9 @@ public class Product {
             throw new RuntimeException("재고가 부족합니다.");
         }
         this.stock -= quantity;
+
+        if (this.stock == 0) {
+            this.status = ProductStatus.SOLD_OUT;
+        }
     }
 }

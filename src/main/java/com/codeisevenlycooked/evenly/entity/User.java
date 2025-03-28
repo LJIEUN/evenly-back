@@ -36,9 +36,9 @@ public class User {
     @Builder.Default
     private UserRole role = UserRole.USER;
 
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP NULL")
     @Builder.Default
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt = LocalDateTime.now().withNano(0);
 
     @Column(columnDefinition = "TIMESTAMP NULL")
     private LocalDateTime deletedAt; // 탈퇴한 경우 삭제 시간 (30일 후 영구 삭제)

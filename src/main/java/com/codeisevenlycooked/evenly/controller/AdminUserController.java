@@ -33,7 +33,7 @@ public class AdminUserController {
     }
 
     @PostMapping("/{id}/edit")
-    public String update(@PathVariable Long id, @ModelAttribute("user") AdminUserUpdateDto userUpdateDto, BindingResult result) {
+    public String update(@PathVariable @Valid Long id, @ModelAttribute("user") AdminUserUpdateDto userUpdateDto, BindingResult result) {
         if (result.hasErrors()) {
             return "admin/user-form";
         }
@@ -43,13 +43,13 @@ public class AdminUserController {
     }
 
     @PostMapping("/{id}/delete")
-    public String deleteUser(@PathVariable Long id) {
+    public String deleteUser(@PathVariable @Valid Long id) {
         userService.softDeleteUser(id);
         return "redirect:/admin/users";
     }
 
     @PostMapping("/{id}/permanent-delete")
-    public String hardDeleteUser(@PathVariable Long id) {
+    public String hardDeleteUser(@PathVariable @Valid Long id) {
         userService.hardDeleteUser(id);
         return "redirect:/admin/users";
     }

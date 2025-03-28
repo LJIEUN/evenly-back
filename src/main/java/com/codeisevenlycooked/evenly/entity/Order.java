@@ -52,5 +52,6 @@ public class Order {
     @Column(name = "status")
     private OrderStatus status;
 
+    @Column(columnDefinition = "TIMESTAMP NULL")
     private LocalDateTime createdAt;
 }
