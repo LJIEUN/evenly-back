@@ -97,6 +97,8 @@ public class ProductService {
             status = ProductStatus.DELETED;
         } else if (productDto.getStock() == 0) {
             status = ProductStatus.SOLD_OUT;
+        } else {
+            status = ProductStatus.AVAILABLE;
         }
 
         Product updatedProduct = Product.builder()

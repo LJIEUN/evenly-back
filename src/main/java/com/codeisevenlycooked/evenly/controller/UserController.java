@@ -6,7 +6,6 @@ import com.codeisevenlycooked.evenly.dto.UserInfoDto;
 import com.codeisevenlycooked.evenly.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

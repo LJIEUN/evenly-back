@@ -2,11 +2,7 @@ package com.codeisevenlycooked.evenly.controller;
 
 import com.codeisevenlycooked.evenly.dto.PagedProductResponse;
 import com.codeisevenlycooked.evenly.dto.ProductResponseDto;
-import com.codeisevenlycooked.evenly.entity.Product;
-import com.codeisevenlycooked.evenly.repository.ProductRepository;
 import com.codeisevenlycooked.evenly.service.ProductService;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;

@@ -2,22 +2,17 @@ package com.codeisevenlycooked.evenly.service;
 
 import com.codeisevenlycooked.evenly.dto.*;
 import com.codeisevenlycooked.evenly.entity.*;
-import com.codeisevenlycooked.evenly.repository.OrderRepository;
-import com.codeisevenlycooked.evenly.repository.ProductRepository;
-import com.codeisevenlycooked.evenly.repository.UserRepository;
+import com.codeisevenlycooked.evenly.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @Service
@@ -27,6 +22,8 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final CartRepository cartRepository;
+    private final CartItemRepository cartItemRepository;
 
     public OrderCreationResponseDto createOrder(String userId, List<ItemDto> itemDtoList) {
 
@@ -124,11 +121,18 @@ public class OrderService {
                     .createdAt(LocalDateTime.now())
                     .build();
 
-            //재고 감소
+            //재고 감소 + 장바구니 아이템 삭제
             for (OrderItem orderItem : order.getOrderItems()) {
                 Product product = orderItem.getProduct();
-                product.changeStock(product.getStock() - orderItem.getQuantity());
+
+                if (product.getStock() < orderItem.getQuantity()) {
+                    throw new RuntimeException("재고가 부족합니다.");
+                }
+
+                product.changeStock(orderItem.getQuantity());
                 productRepository.save(product);
+
+                updateCartIfExists(user, product.getId(), orderItem.getQuantity());
             }
 
             orderRepository.save(order);
@@ -184,8 +188,6 @@ public class OrderService {
                 ))
                 .toList();
 
-        log.info("Order items: {}", orderItems);
-
         OrderCreationResponseDto orderCreationResponseDto = new OrderCreationResponseDto(
                 order.getId(),
                 orderItems,
@@ -212,5 +214,26 @@ public class OrderService {
         String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String orderNumber = date + String.format("%04d", orderRepository.count() + 1);
         return orderNumber;
+    }
+
+    private void updateCartIfExists(User user, Long productId, int quantity) {
+        Cart cart = cartRepository.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("장바구니를 찾을 수 없습니다."));
+
+        CartItem cartItem = cartItemRepository.findByCartAndProductId(cart, productId).orElse(null);
+
+        if (cartItem != null) {
+            if (cartItem.getQuantity() >= quantity) {
+                cartItem.setQuantity(cartItem.getQuantity() - quantity);
+
+                if (cartItem.getQuantity() <= 0) {
+                    cartItemRepository.delete(cartItem);
+                } else {
+                    cartItemRepository.save(cartItem);
+                }
+            } else {
+                cartItemRepository.delete(cartItem);
+            }
+        }
     }
 }

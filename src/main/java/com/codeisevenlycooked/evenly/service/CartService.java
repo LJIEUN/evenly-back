@@ -65,10 +65,20 @@ public class CartService {
         Product product = productRepository.findById(itemDto.getProductId())
                 .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 없습니다."));
 
+        if (product.getStock() < itemDto.getQuantity()) {
+            throw new IllegalArgumentException("재고가 부족합니다. 남은 재고: " + product.getStock());
+        }
+
         CartItem cartItem = cartItemRepository.findByCartAndProduct(cart, product).orElse(null);
 
         /* 이미 수량이 있을때 수량 증가하는 부분 */
         if (cartItem != null) {
+            int newQuantity = cartItem.getQuantity() + itemDto.getQuantity();
+
+            if (product.getStock() < newQuantity) {
+                throw new IllegalArgumentException("재고가 부족합니다. 남은 재고: " + product.getStock());
+            }
+
             cartItem.setQuantity(cartItem.getQuantity() + itemDto.getQuantity());
             cartItemRepository.save(cartItem);
         }
@@ -94,6 +104,11 @@ public class CartService {
         if (!cartItem.getCart().getUser().getId().equals(user.getId())) {
             throw new IllegalArgumentException("로그인 후 이용해 주세요.");
         }
+
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("수량은 1개 이상이어야 합니다.");
+        }
+
 
         cartItem.setQuantity(quantity);
         cartItemRepository.save(cartItem);
