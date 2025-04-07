@@ -29,6 +29,7 @@
       <div class="mb-3">
         <label class="form-label">상태</label>
         <select class="form-control" th:field="*{status}">
+          <option value="NOT_PAID" th:selected="${order.status == 'NOT_PAID'}">NOT_PAID</option>
           <option value="PENDING" th:selected="${order.status == 'PENDING'}">PENDING</option>
           <option value="SHIPPED" th:selected="${order.status == 'SHIPPED'}">SHIPPED</option>
           <option value="DELIVERED" th:selected="${order.status == 'DELIVERED'}">DELIVERED</option>
