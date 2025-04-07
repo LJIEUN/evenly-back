@@ -33,7 +33,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/", "/css/**", "/products/**").permitAll()// 홈화면(상품 목록), 상품 상세, 등 추가 필요
                         .requestMatchers("/admin/**" ).permitAll()
-                        .requestMatchers("/auth/login", "/auth/signup").permitAll() // 로그인, 회원가입 인증 없이
+                        .requestMatchers("/auth/login", "/auth/signup", "/auth/refresh").permitAll() // 로그인, 회원가입, 토큰 재발급 인증 없이
                         .anyRequest().authenticated() // 그외 모든 요청은 인증 필요
                 )
                 .exceptionHandling(e -> e

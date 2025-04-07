@@ -43,13 +43,13 @@ public class AuthController {
         String refreshToken = jwtUtil.resolveToken(request);
 
         if (refreshToken == null || refreshToken.isBlank()) {
-            return ResponseEntity.badRequest().body(Map.of("messsage", "Refresh Token is missing"));
+            return ResponseEntity.badRequest().body(Map.of("message", "Refresh Token is missing"));
         }
         try {
             String newAccessToken = jwtUtil.renewAccessToken(refreshToken);
             return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
         } catch (JwtException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("messsage", "Invalid Token"));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Invalid Token"));
         }
     }
 
